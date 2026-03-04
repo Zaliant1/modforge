@@ -1,0 +1,30 @@
+export const styles = {
+  'issue-card': {
+    p: 2,
+    cursor: 'pointer',
+    bgcolor: '#2a2a2a',
+    '&:hover': { bgcolor: '#333' },
+  },
+  'issue-card__header': {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  'issue-card__summary': { flex: 1, mr: 1 },
+  'issue-card__meta': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    mt: 1,
+  },
+  'issue-card__icons': { display: 'flex', gap: 0.5, alignItems: 'center' },
+  'issue-card__priority--low': { color: '#5865F2', fontSize: 14 },
+  'issue-card__priority--medium': { color: '#e0b83a', fontSize: 14 },
+  'issue-card__priority--high': { color: '#e06c3a', fontSize: 14 },
+  'issue-card__type': { fontSize: 14 },
+  'issue-card__os': { fontSize: 13 },
+  'issue-card__right': { display: 'flex', alignItems: 'center', gap: 1 },
+  'issue-card__author': { width: 24, height: 24, fontSize: 11 },
+  'issue-card__progress': { mt: 1, height: 4, borderRadius: 2 },
+  'issue-card__delete': { color: 'error.main' },
+}

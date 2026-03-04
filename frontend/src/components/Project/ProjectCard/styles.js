@@ -1,0 +1,37 @@
+export const styles = {
+  'project-card': {
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    height: 480,
+    width: '100%',
+    maxWidth: 350,
+    overflow: 'hidden',
+    transition: 'opacity 0.15s',
+    '&:hover': { opacity: 0.85 },
+  },
+  'project-card__media': { height: 197, objectFit: 'cover', flexShrink: 0 },
+  'project-card__content': {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    pb: '16px !important',
+  },
+  'project-card__name': {
+    fontWeight: 700,
+    textAlign: 'center',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+  },
+  'project-card__version': { textAlign: 'center' },
+  'project-card__about': {
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
+  },
+  'project-card__avatars': { mt: 'auto', pt: 1 },
+  'project-card__member-avatar': { width: 32, height: 32, fontSize: 13 },
+}
