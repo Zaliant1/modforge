@@ -9,6 +9,7 @@ export const styles = {
     overflow: 'hidden',
     width: 220,
     flexShrink: 0,
+    position: 'relative',
   },
 
   // Project switcher
@@ -70,6 +71,8 @@ export const styles = {
     flex: 1,
     overflowY: 'auto',
     p: '10px 8px',
+    position: 'relative',
+    zIndex: 1,
   },
   'sn__section': {
     fontFamily: vars.mono,
@@ -152,11 +155,57 @@ export const styles = {
     my: '8px',
   },
 
+  // Category items
+  'sn__cat-item': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    py: '6px',
+    px: '10px',
+    borderRadius: '6px',
+    mb: '1px',
+    fontSize: 12,
+    fontWeight: 500,
+    color: vars.text2,
+    cursor: 'pointer',
+    transition: 'all 0.12s',
+    '&:hover': { bgcolor: 'rgba(255,255,255,0.03)', color: vars.text },
+  },
+  'sn__cat-item--active': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    py: '6px',
+    px: '10px',
+    borderRadius: '6px',
+    mb: '1px',
+    fontSize: 12,
+    fontWeight: 500,
+    color: vars.text,
+    cursor: 'pointer',
+    transition: 'all 0.12s',
+    bgcolor: 'rgba(255,255,255,0.04)',
+  },
+  'sn__cat-dot': {
+    width: 6,
+    height: 6,
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+  'sn__cat-count': {
+    ml: 'auto',
+    fontFamily: vars.mono,
+    fontSize: 9,
+    color: vars.text3,
+  },
+
   // Footer
   'sn__footer': {
     borderTop: `1px solid ${vars.border}`,
     p: '10px 8px',
     flexShrink: 0,
+    position: 'relative',
+    zIndex: 1,
   },
   'sn__user': {
     display: 'flex',

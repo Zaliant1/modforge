@@ -3,16 +3,17 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.issue import IssueCreate, IssueUpdate, IssueOut
 
 router = APIRouter()
 
 
-@router.get('/projects/{project_id}/issues')
+@router.get('/projects/{project_id}/issues', response_model=list[IssueOut])
 def list_issues(
     project_id: int,
     category: Optional[str] = None,
     status: Optional[str] = None,
-    version: Optional[str] = None,
+    version_id: Optional[int] = None,
     archived: Optional[bool] = None,
     user: dict = Depends(get_current_user),
 ):
@@ -32,7 +33,7 @@ def list_issues(
             continue
         if status is not None and i['status'] != status:
             continue
-        if version is not None and i.get('version') != version:
+        if version_id is not None and i.get('version_id') != version_id:
             continue
         if archived is not None and i.get('archived', False) != archived:
             continue
@@ -40,8 +41,8 @@ def list_issues(
     return [db.enrich_issue(i, discord_id) for i in result]
 
 
-@router.post('/projects/{project_id}/issues')
-def create_issue(project_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.post('/projects/{project_id}/issues', response_model=IssueOut)
+def create_issue(project_id: int, body: IssueCreate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -52,22 +53,22 @@ def create_issue(project_id: int, body: dict, user: dict = Depends(get_current_u
 
     is_visitor = role is None
     current_version = db.get_current_version(project_id)
-    current_version_name = current_version['name'] if current_version else ''
+    current_version_id = current_version['id'] if current_version else None
 
     issue_id = db.next_id('issue')
     issue = {
         'id': issue_id,
         'project_id': project_id,
-        'summary': body.get('summary', ''),
+        'summary': body.summary,
         'author_id': discord_id,
-        'version': current_version_name if is_visitor else body.get('version', current_version_name),
-        'category': body.get('category', project['categories'][0] if project['categories'] else ''),
-        'type': body.get('type', 'bug'),
-        'priority': 'medium' if is_visitor else body.get('priority', 'medium'),
-        'status': body.get('status', 'reported'),
-        'operating_systems': body.get('operating_systems', []),
-        'description': body.get('description', ''),
-        'modlog': body.get('modlog'),
+        'version_id': current_version_id if is_visitor else (body.version_id or current_version_id),
+        'category': body.category or (project['categories'][0] if project['categories'] else ''),
+        'type': body.type.value,
+        'priority': 'medium' if is_visitor else body.priority.value,
+        'status': body.status.value,
+        'operating_systems': [os.value for os in body.operating_systems],
+        'description': body.description,
+        'modlog': body.modlog,
         'archived': False,
         'upvotes': 0,
         'is_visitor_issue': is_visitor,
@@ -77,7 +78,7 @@ def create_issue(project_id: int, body: dict, user: dict = Depends(get_current_u
     return db.enrich_issue(issue, discord_id)
 
 
-@router.get('/projects/{project_id}/issues/{issue_id}')
+@router.get('/projects/{project_id}/issues/{issue_id}', response_model=IssueOut)
 def get_issue(project_id: int, issue_id: int, user: dict = Depends(get_current_user)):
     issue = db.issues.get(issue_id)
     if not issue or issue['project_id'] != project_id:
@@ -90,8 +91,8 @@ def get_issue(project_id: int, issue_id: int, user: dict = Depends(get_current_u
     return db.enrich_issue(issue, discord_id)
 
 
-@router.put('/projects/{project_id}/issues/{issue_id}')
-def update_issue(project_id: int, issue_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.put('/projects/{project_id}/issues/{issue_id}', response_model=IssueOut)
+def update_issue(project_id: int, issue_id: int, body: IssueUpdate, user: dict = Depends(get_current_user)):
     issue = db.issues.get(issue_id)
     if not issue or issue['project_id'] != project_id:
         raise HTTPException(status_code=404, detail='Issue not found')
@@ -102,14 +103,25 @@ def update_issue(project_id: int, issue_id: int, body: dict, user: dict = Depend
     if role is None and not is_own_visitor:
         raise HTTPException(status_code=403, detail='Forbidden')
 
-    allowed = {'summary', 'type', 'priority', 'status', 'category', 'version',
+    allowed = {'summary', 'type', 'priority', 'status', 'category', 'version_id',
                'operating_systems', 'description', 'modlog', 'archived'}
     if role is None:
         allowed = {'summary', 'type', 'category', 'operating_systems', 'description'}
 
-    for key in allowed:
-        if key in body:
-            issue[key] = body[key]
+    updates = body.model_dump(exclude_unset=True)
+    for key, value in updates.items():
+        if key not in allowed:
+            continue
+        if isinstance(value, list):
+            issue[key] = [v.value if hasattr(v, 'value') else v for v in value]
+        elif hasattr(value, 'value'):
+            issue[key] = value.value
+        else:
+            issue[key] = value
+
+    if issue.get('archived') and issue.get('status') not in ('completed', 'wont_fix'):
+        raise HTTPException(status_code=422, detail='Can only archive completed or wont_fix issues')
+
     return db.enrich_issue(issue, discord_id)
 
 

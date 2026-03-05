@@ -2,11 +2,12 @@ import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.project import VersionCreate, VersionUpdate, VersionOut
 
 router = APIRouter()
 
 
-@router.get('/{project_id}/versions')
+@router.get('/{project_id}/versions', response_model=list[VersionOut])
 def list_versions(project_id: int, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
@@ -20,8 +21,8 @@ def list_versions(project_id: int, user: dict = Depends(get_current_user)):
     return versions
 
 
-@router.post('/{project_id}/versions')
-def create_version(project_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.post('/{project_id}/versions', response_model=VersionOut)
+def create_version(project_id: int, body: VersionCreate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -32,9 +33,10 @@ def create_version(project_id: int, body: dict, user: dict = Depends(get_current
     version = {
         'id': version_id,
         'project_id': project_id,
-        'name': body.get('name', ''),
-        'status': body.get('status', 'upcoming'),
-        'released_at': body.get('released_at'),
+        'name': body.name,
+        'description': body.description,
+        'status': body.status.value,
+        'released_at': None,
         'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
     }
     # If setting as current, unset any existing current version
@@ -46,8 +48,8 @@ def create_version(project_id: int, body: dict, user: dict = Depends(get_current
     return version
 
 
-@router.put('/{project_id}/versions/{version_id}')
-def update_version(project_id: int, version_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.put('/{project_id}/versions/{version_id}', response_model=VersionOut)
+def update_version(project_id: int, version_id: int, body: VersionUpdate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -57,18 +59,20 @@ def update_version(project_id: int, version_id: int, body: dict, user: dict = De
     version = db.project_versions.get(version_id)
     if not version or version['project_id'] != project_id:
         raise HTTPException(status_code=404, detail='Version not found')
-    if 'name' in body:
-        version['name'] = body['name']
-    if 'status' in body:
-        new_status = body['status']
+
+    updates = body.model_dump(exclude_unset=True)
+    if 'name' in updates:
+        version['name'] = updates['name']
+    if 'description' in updates:
+        version['description'] = updates['description']
+    if 'status' in updates:
+        new_status = updates['status'].value
         # If setting as current, unset any existing current version
         if new_status == 'current' and version['status'] != 'current':
             for v in db.project_versions.values():
                 if v['project_id'] == project_id and v['status'] == 'current':
                     v['status'] = 'released'
         version['status'] = new_status
-    if 'released_at' in body:
-        version['released_at'] = body['released_at']
     return version
 
 

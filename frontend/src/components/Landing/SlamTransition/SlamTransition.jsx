@@ -21,7 +21,6 @@ export const SlamTransition = ({ mode, onComplete }) => {
 
     const modColor = mode === 'mod' ? vars.modBlue : vars.text
     const forgeColor = mode === 'forge' ? vars.accent : vars.text
-    const glowColor = mode === 'mod' ? vars.modGlow : vars.accGlow
     const glowRgba = mode === 'mod' ? 'rgba(96,165,250,' : 'rgba(249,115,22,'
 
     // Set colors

@@ -2,6 +2,7 @@ import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.comment import CommentCreate, CommentUpdate, CommentOut
 
 router = APIRouter()
 
@@ -18,7 +19,7 @@ def _enrich_comment(comment: dict) -> dict:
     }
 
 
-@router.get('/issues/{issue_id}/comments')
+@router.get('/issues/{issue_id}/comments', response_model=list[CommentOut])
 def list_comments(issue_id: int, user: dict = Depends(get_current_user)):
     if issue_id not in db.issues:
         raise HTTPException(status_code=404, detail='Issue not found')
@@ -27,8 +28,8 @@ def list_comments(issue_id: int, user: dict = Depends(get_current_user)):
     return [_enrich_comment(c) for c in result]
 
 
-@router.post('/issues/{issue_id}/comments')
-def create_comment(issue_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.post('/issues/{issue_id}/comments', response_model=CommentOut)
+def create_comment(issue_id: int, body: CommentCreate, user: dict = Depends(get_current_user)):
     if issue_id not in db.issues:
         raise HTTPException(status_code=404, detail='Issue not found')
     comment_id = db.next_id('comment')
@@ -36,21 +37,21 @@ def create_comment(issue_id: int, body: dict, user: dict = Depends(get_current_u
         'id': comment_id,
         'issue_id': issue_id,
         'author_id': user['discord_id'],
-        'body': body.get('body', ''),
+        'body': body.body,
         'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
     }
     db.comments[comment_id] = comment
     return _enrich_comment(comment)
 
 
-@router.put('/issues/{issue_id}/comments/{comment_id}')
-def update_comment(issue_id: int, comment_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.put('/issues/{issue_id}/comments/{comment_id}', response_model=CommentOut)
+def update_comment(issue_id: int, comment_id: int, body: CommentUpdate, user: dict = Depends(get_current_user)):
     comment = db.comments.get(comment_id)
     if not comment or comment['issue_id'] != issue_id:
         raise HTTPException(status_code=404, detail='Comment not found')
     if comment['author_id'] != user['discord_id']:
         raise HTTPException(status_code=403, detail='Forbidden')
-    comment['body'] = body.get('body', comment['body'])
+    comment['body'] = body.body
     return _enrich_comment(comment)
 
 

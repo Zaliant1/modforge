@@ -2,11 +2,12 @@ import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.change_request import ChangeRequestCreate, ChangeRequestResolve, ChangeRequestOut
 
 router = APIRouter()
 
 
-@router.get('/{project_id}/requests')
+@router.get('/{project_id}/requests', response_model=list[ChangeRequestOut])
 def list_requests(project_id: int, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
@@ -17,8 +18,8 @@ def list_requests(project_id: int, user: dict = Depends(get_current_user)):
     return [r for r in db.change_requests.values() if r['project_id'] == project_id]
 
 
-@router.post('/{project_id}/requests')
-def submit_request(project_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.post('/{project_id}/requests', response_model=ChangeRequestOut)
+def submit_request(project_id: int, body: ChangeRequestCreate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -32,8 +33,8 @@ def submit_request(project_id: int, body: dict, user: dict = Depends(get_current
         'project_id': project_id,
         'requester_id': discord_id,
         'status': 'pending',
-        'changes': body.get('changes', {}),
-        'note': body.get('note', ''),
+        'changes': body.changes,
+        'note': body.note,
         'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
         'reviewed_at': None,
         'reviewer_id': None,
@@ -42,8 +43,8 @@ def submit_request(project_id: int, body: dict, user: dict = Depends(get_current
     return req
 
 
-@router.put('/{project_id}/requests/{req_id}')
-def resolve_request(project_id: int, req_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.put('/{project_id}/requests/{req_id}', response_model=ChangeRequestOut)
+def resolve_request(project_id: int, req_id: int, body: ChangeRequestResolve, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -54,13 +55,12 @@ def resolve_request(project_id: int, req_id: int, body: dict, user: dict = Depen
     req = db.change_requests.get(req_id)
     if not req or req['project_id'] != project_id:
         raise HTTPException(status_code=404, detail='Request not found')
-    action = body.get('status')
-    if action not in ('approved', 'rejected'):
+    if body.status not in ('approved', 'rejected'):
         raise HTTPException(status_code=400, detail='status must be approved or rejected')
-    req['status'] = action
+    req['status'] = body.status.value
     req['reviewer_id'] = discord_id
     req['reviewed_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
-    if action == 'approved':
+    if body.status == 'approved':
         for key, value in req['changes'].items():
             if key in project:
                 project[key] = value

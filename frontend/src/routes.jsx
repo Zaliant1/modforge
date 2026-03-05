@@ -6,6 +6,7 @@ import ModDetail from '~/pages/Mod/ModDetail/ModDetail'
 import ForgeDashboard from '~/pages/Forge/ForgeDashboard/ForgeDashboard'
 import CreateProject from '~/pages/Forge/Project/ProjectEdit/ProjectEdit'
 import ProjectPage from '~/pages/ProjectPage/ProjectPage'
+import KanbanPage from '~/pages/Forge/Kanban/KanbanPage'
 import { IssuePage } from '~/components/Issue/IssuePage/IssuePage'
 import IssueCreate from '~/pages/Forge/Issue/IssueCreate/IssueCreate'
 import ProjectSettings from '~/pages/Forge/Project/ProjectSettings/ProjectSettings'
@@ -27,7 +28,8 @@ const AppRoutes = () => {
 
       <Route path='/forge/projects/:id' element={<Main />}>
         <Route index element={<ProjectPage />} />
-        <Route path=':category' element={<ProjectPage />} />
+        <Route path='kanban' element={<KanbanPage />} />
+        <Route path='kanban/:category' element={<KanbanPage />} />
         <Route path='issues/new' element={<IssueCreate />} />
         <Route path='issues/:issueId' element={<IssuePage />} />
         <Route path='settings' element={<ProjectSettings />} />

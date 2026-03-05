@@ -7,6 +7,8 @@ export const styles = {
     gridTemplateColumns: '1fr 300px',
     flex: 1,
     minHeight: 0,
+    position: 'relative',
+    zIndex: 1,
   },
   'pp__left': {
     p: '24px 28px',

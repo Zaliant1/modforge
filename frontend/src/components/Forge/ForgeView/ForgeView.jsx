@@ -8,10 +8,11 @@ import { useProjects } from '~/context/ProjectsContext'
 import { getProjectStats } from '~/api/stats'
 import { getProjectActivity } from '~/api/activity'
 import { ForgeProjectCard } from '~/components/Forge/ForgeProjectCard/ForgeProjectCard'
-import { ACTIVITY_DOT_COLORS } from '~/constants'
+import { ACTIVITY_DOT_COLORS, GAME_ICONS } from '~/constants'
 import { relativeTime } from '~/utils/time'
 import { styles } from './ForgeView.styles'
 import { useStyles } from '~/hooks/useStyles'
+import { useCountUp } from '~/hooks/useCountUp'
 
 const formatNum = (num) => {
   if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
@@ -21,7 +22,7 @@ const formatNum = (num) => {
 export const ForgeView = () => {
   const { user } = useAuth() || {}
   const { username } = user || {}
-  const { projects = [] } = useProjects() || {}
+  const { projects = [], setProject } = useProjects() || {}
   const navigate = useNavigate()
   const [activeFilter, setActiveFilter] = useState('All')
   const [selectedProject, setSelectedProject] = useState(null)
@@ -33,6 +34,7 @@ export const ForgeView = () => {
 
   useEffect(() => {
     if (!activeProject) return
+    if (setProject) setProject(activeProject)
     const { id: projectId } = activeProject || {}
     getProjectStats(projectId).then(setStats).catch(() => {})
     getProjectActivity(projectId).then(setActivity).catch(() => {})
@@ -41,8 +43,10 @@ export const ForgeView = () => {
   const {
     id: activeId,
     name: activeName = '',
-    version: activeVersion = '',
+    game: activeGame = '',
   } = activeProject || {}
+
+  const { color: gameColor } = GAME_ICONS[activeGame] || GAME_ICONS._default
 
   const {
     downloads = 0,
@@ -55,60 +59,22 @@ export const ForgeView = () => {
     rating_count: ratingCount = 0,
   } = stats || {}
 
-  return (
-    <Box sx={useStyles(styles, 'forge-layout')}>
-      {/* Sidebar */}
-      <Box sx={useStyles(styles, 'forge-sidebar')}>
-        <Box sx={useStyles(styles, 'fsb-project')} onClick={() => activeId && navigate(`/forge/projects/${activeId}`)}>
-          <Box sx={useStyles(styles, 'fsb-proj-img')}>
-            {(activeName || '?')[0]}
-          </Box>
-          <Box>
-            <Typography sx={useStyles(styles, 'fsb-proj-name')}>{activeName}</Typography>
-            <Typography sx={useStyles(styles, 'fsb-proj-sub')}>v{activeVersion} {'\u00B7'} CURRENT</Typography>
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-chevron')}>{'\u2304'}</Box>
-        </Box>
-        <Box sx={useStyles(styles, 'fsb-nav')}>
-          <Typography sx={useStyles(styles, 'fsb-label')}>Project</Typography>
-          <Box sx={useStyles(styles, 'fsb-item--active')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon--active')}>{'\u2B21'}</Box> Overview
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-item')} onClick={() => activeId && navigate(`/forge/projects/${activeId}`)}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u229E'}</Box> Kanban
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-item')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u2B15'}</Box> Releases
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-item')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u21BB'}</Box> Activity
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-divider')} />
-          <Typography sx={useStyles(styles, 'fsb-label')}>Workspace</Typography>
-          <Box sx={useStyles(styles, 'fsb-item')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u2B21'}</Box> All Projects
-            <Box component='span' sx={{ ...useStyles(styles, 'fsb-chip'), ...useStyles(styles, 'chip-def') }}>{projects.length}</Box>
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-item')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u25CE'}</Box> Discover
-          </Box>
-          <Box sx={useStyles(styles, 'fsb-item')}>
-            <Box component='span' sx={useStyles(styles, 'fsb-icon')}>{'\u25C7'}</Box> Blog
-          </Box>
-        </Box>
-        <Box sx={useStyles(styles, 'fsb-footer')}>
-          <Box sx={useStyles(styles, 'fsb-user')}>
-            <Box sx={useStyles(styles, 'fsb-uav')}>{(username || 'G')[0]}</Box>
-            <Box>
-              <Typography sx={useStyles(styles, 'fsb-uname')}>{username || 'Guest'}</Typography>
-              <Typography sx={useStyles(styles, 'fsb-usub')}>Forge Master</Typography>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+  const animDownloads = useCountUp(downloads)
+  const animDownloadsWeek = useCountUp(downloadsWeek)
+  const animOpenIssues = useCountUp(openIssues)
+  const animOpenIssuesToday = useCountUp(openIssuesToday)
+  const animBugsClosed = useCountUp(bugsClosed)
+  const animCloseRate = useCountUp(closeRate)
+  const animAvgRating = useCountUp(avgRating)
+  const animRatingCount = useCountUp(ratingCount)
 
-      {/* Main content */}
-      <Box sx={useStyles(styles, 'forge-main')}>
+  return (
+    <Box sx={useStyles(styles, 'forge-main')}>
+      {/* Game color wash */}
+      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '280px', background: `linear-gradient(to bottom, ${gameColor}18 0%, ${gameColor}08 40%, transparent 100%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '200px', background: `linear-gradient(to top, ${gameColor}10 0%, transparent 60%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: `linear-gradient(to right, ${gameColor}40 0%, ${gameColor}15 40%, transparent 80%)`, pointerEvents: 'none', zIndex: 2 }} />
+      <Box sx={{ position: 'absolute', top: 0, left: 0, width: '1px', height: '280px', background: `linear-gradient(to bottom, ${gameColor}40 0%, ${gameColor}15 40%, transparent 100%)`, pointerEvents: 'none', zIndex: 2 }} />
         {/* Topbar */}
         <Box sx={useStyles(styles, 'forge-topbar')}>
           <Box sx={useStyles(styles, 'ftb-crumb')}>
@@ -132,23 +98,23 @@ export const ForgeView = () => {
         <Box sx={useStyles(styles, 'metric-strip')}>
           <Box sx={useStyles(styles, 'metric-cell')}>
             <Typography sx={useStyles(styles, 'metric-label')}>Downloads</Typography>
-            <Typography sx={useStyles(styles, 'metric-num')}>{formatNum(downloads)}</Typography>
-            <Typography sx={useStyles(styles, 'metric-delta')}>{'\u2191'} +{formatNum(downloadsWeek)} this week</Typography>
+            <Typography sx={useStyles(styles, 'metric-num')}>{formatNum(animDownloads)}</Typography>
+            <Typography sx={useStyles(styles, 'metric-delta')}>{'\u2191'} +{formatNum(animDownloadsWeek)} this week</Typography>
           </Box>
           <Box sx={useStyles(styles, 'metric-cell')}>
             <Typography sx={useStyles(styles, 'metric-label')}>Open Issues</Typography>
-            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--red') }}>{openIssues}</Typography>
-            <Typography sx={useStyles(styles, openIssuesToday > 0 ? 'metric-delta--neg' : 'metric-delta--neu')}>{'\u2191'} {openIssuesToday} new today</Typography>
+            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--red') }}>{animOpenIssues}</Typography>
+            <Typography sx={useStyles(styles, openIssuesToday > 0 ? 'metric-delta--neg' : 'metric-delta--neu')}>{'\u2191'} {animOpenIssuesToday} new today</Typography>
           </Box>
           <Box sx={useStyles(styles, 'metric-cell')}>
             <Typography sx={useStyles(styles, 'metric-label')}>Bugs Closed</Typography>
-            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--green') }}>{bugsClosed}</Typography>
-            <Typography sx={useStyles(styles, 'metric-delta')}>{Math.round(closeRate * 100)}% closed</Typography>
+            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--green') }}>{animBugsClosed}</Typography>
+            <Typography sx={useStyles(styles, 'metric-delta')}>{Math.round(animCloseRate * 100)}% closed</Typography>
           </Box>
           <Box sx={useStyles(styles, 'metric-cell')}>
             <Typography sx={useStyles(styles, 'metric-label')}>Avg Rating</Typography>
-            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--accent') }}>{avgRating}{'\u2605'}</Typography>
-            <Typography sx={useStyles(styles, 'metric-delta--neu')}>{ratingCount} reviews</Typography>
+            <Typography sx={{ ...useStyles(styles, 'metric-num'), ...useStyles(styles, 'metric-num--accent') }}>{animAvgRating}{'\u2605'}</Typography>
+            <Typography sx={useStyles(styles, 'metric-delta--neu')}>{animRatingCount} reviews</Typography>
           </Box>
         </Box>
 
@@ -228,6 +194,5 @@ export const ForgeView = () => {
           </Box>
         </Box>
       </Box>
-    </Box>
   )
 }

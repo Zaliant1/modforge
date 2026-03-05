@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.project import ProjectCreate, ProjectUpdate, ProjectSummary, ProjectDetail
 import datetime
 
 router = APIRouter()
@@ -9,11 +10,15 @@ router = APIRouter()
 def _project_summary(project: dict, discord_id: str) -> dict:
     role = db.get_user_role(project['id'], discord_id)
     members = db.get_project_members(project['id'])
+    current_version = db.get_current_version(project['id'])
+    views = sum(1 for e in db.view_events if e['project_id'] == project['id'])
     return {
         **project,
+        'version': current_version['name'] if current_version else None,
         'is_member': role is not None,
         'user_role': role,
         'member_count': len(members),
+        'views': views,
     }
 
 
@@ -35,8 +40,10 @@ def _category_stats(project_id: int, categories: list) -> dict:
 def _project_detail(project: dict, discord_id: str) -> dict:
     role = db.get_user_role(project['id'], discord_id)
     members = db.get_project_members(project['id'])
+    current_version = db.get_current_version(project['id'])
     return {
         **project,
+        'version': current_version['name'] if current_version else None,
         'is_member': role is not None,
         'user_role': role,
         'members': members,
@@ -44,7 +51,7 @@ def _project_detail(project: dict, discord_id: str) -> dict:
     }
 
 
-@router.get('')
+@router.get('', response_model=list[ProjectSummary])
 def list_projects(user: dict = Depends(get_current_user)):
     discord_id = user['discord_id']
     result = []
@@ -57,17 +64,20 @@ def list_projects(user: dict = Depends(get_current_user)):
 
 
 @router.post('')
-def create_project(body: dict, user: dict = Depends(get_current_user)):
+def create_project(body: ProjectCreate, user: dict = Depends(get_current_user)):
     discord_id = user['discord_id']
     project_id = db.next_id('project')
+    is_public = body.is_public
+    if not body.game:
+        is_public = False
     project = {
         'id': project_id,
-        'name': body.get('name', 'Untitled'),
-        'about': body.get('about', ''),
-        'picture': body.get('picture', ''),
-        'categories': body.get('categories', []),
-        'is_public': body.get('is_public', False),
-        'views': 0,
+        'name': body.name,
+        'game': body.game,
+        'about': body.about,
+        'picture': body.picture,
+        'categories': body.categories,
+        'is_public': is_public,
         'owner_id': discord_id,
         'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
     }
@@ -78,16 +88,16 @@ def create_project(body: dict, user: dict = Depends(get_current_user)):
     version = {
         'id': version_id,
         'project_id': project_id,
-        'name': body.get('version', '1.0.0'),
+        'name': body.version,
         'status': 'current',
         'released_at': None,
         'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
     }
     db.project_versions[version_id] = version
-    return project
+    return _project_detail(project, discord_id)
 
 
-@router.get('/{project_id}')
+@router.get('/{project_id}', response_model=ProjectDetail)
 def get_project(project_id: int, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
@@ -100,7 +110,7 @@ def get_project(project_id: int, user: dict = Depends(get_current_user)):
 
 
 @router.put('/{project_id}')
-def update_project(project_id: int, body: dict, user: dict = Depends(get_current_user)):
+def update_project(project_id: int, body: ProjectUpdate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -108,10 +118,13 @@ def update_project(project_id: int, body: dict, user: dict = Depends(get_current
     role = db.get_user_role(project_id, discord_id)
     if role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
-    allowed = {'name', 'about', 'picture', 'categories', 'is_public'}
-    for key in allowed:
-        if key in body:
-            project[key] = body[key]
+
+    updates = body.model_dump(exclude_unset=True)
+    for key, value in updates.items():
+        project[key] = value
+    # Non-game projects cannot be public
+    if not project.get('game'):
+        project['is_public'] = False
     return _project_detail(project, discord_id)
 
 

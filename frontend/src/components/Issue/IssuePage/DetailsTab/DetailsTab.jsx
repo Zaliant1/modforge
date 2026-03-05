@@ -15,7 +15,7 @@ export const DetailsTab = ({ issue }) => {
     author = {},
     operating_systems = [],
   } = issue || {}
-  const { avatar_url, username = '' } = author || {}
+  const { username = '' } = author || {}
 
   const [html, setHtml] = useState('')
 

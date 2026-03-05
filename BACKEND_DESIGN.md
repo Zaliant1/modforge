@@ -82,11 +82,11 @@ uvicorn main:app --reload --port 8000
 |-------|------|-------|
 | `id` | int | PK |
 | `name` | string | |
+| `game` | string | nullable — the game this mod is for (null for non-game projects) |
 | `about` | string | max 500 chars |
 | `picture` | string | URL to uploaded image/GIF in R2 |
 | `categories` | string[] | list of category names |
 | `is_public` | boolean | whether visitors can interact |
-| `views` | int | incremented per unique visit |
 | `owner_id` | FK → User | |
 | `created_at` | datetime | UTC |
 
@@ -96,19 +96,12 @@ uvicorn main:app --reload --port 8000
 | `id` | int | PK |
 | `project_id` | FK | |
 | `name` | string | version label, e.g. `1.0.0`, `2.0-beta` |
+| `description` | string | changelog / release notes (plain text) |
 | `status` | enum | `released`, `current`, `upcoming` |
 | `released_at` | datetime | nullable — null for upcoming versions |
 | `created_at` | datetime | UTC |
 
 > Exactly one version per project should have `status = current` at any time. Issues can be filtered by version. Visitors creating issues are locked to the `current` version.
-
-#### Changelogs
-| Field | Type | Notes |
-|-------|------|-------|
-| `id` | int | PK |
-| `version_id` | FK → Project Versions | one changelog per version |
-| `body` | string | URL to HTML file in R2 |
-| `created_at` | datetime | |
 
 #### Project Users (junction)
 | Field | Type | Notes |
@@ -117,15 +110,36 @@ uvicorn main:app --reload --port 8000
 | `user_id` | FK | |
 | `role` | enum | `owner`, `maintainer`, `contributor` |
 
+#### View Events
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int | PK |
+| `project_id` | FK | |
+| `client_token` | string | unique token from localStorage (no login required) |
+| `created_at` | datetime | UTC |
+
+> One view per `client_token` per project. Only for public game projects.
+
 #### Download Events
 | Field | Type | Notes |
 |-------|------|-------|
 | `id` | int | PK |
 | `project_id` | FK | |
-| `user_id` | FK → User | nullable (anonymous downloads) |
+| `client_token` | string | unique token from localStorage (no login required) |
 | `created_at` | datetime | UTC |
 
-> `downloads` (lifetime) and `downloads_week` (last 7 days) are derived by counting rows. `downloads_today` can also be derived from this table.
+> One download per `client_token` per project. `downloads` (lifetime), `downloads_week`, `downloads_today` are derived by counting rows. Only for public game projects.
+
+#### Project Ratings
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int | PK |
+| `project_id` | FK | |
+| `user_id` | FK → User | one rating per user per project (must be logged in) |
+| `stars` | int | 1-5 |
+| `created_at` | datetime | |
+
+> `avg_rating` and `rating_count` are derived. Only public game projects can be rated.
 
 ---
 
@@ -158,17 +172,6 @@ uvicorn main:app --reload --port 8000
 | `done` | boolean | assignee can check off |
 
 > `progress` on an issue is derived: `done_count / total_assignments`
-
-#### Project Ratings
-| Field | Type | Notes |
-|-------|------|-------|
-| `id` | int | PK |
-| `project_id` | FK | |
-| `user_id` | FK → User | one rating per user per project |
-| `stars` | int | 1-5 |
-| `created_at` | datetime | |
-
-> `avg_rating` and `rating_count` are derived from this table.
 
 #### Activity Log
 | Field | Type | Notes |
@@ -320,6 +323,9 @@ backend/
 7. The owner role cannot be removed; it can only be transferred.
 8. All timestamps are stored as UTC. "Today" and "this week" are computed server-side against UTC boundaries.
 9. Download counts (`downloads`, `downloads_week`, `downloads_today`) are derived from the `Download Events` table by counting rows within the relevant UTC time window — no rolling counters or cron jobs needed.
+10. Views, downloads, ratings, and issue upvotes are unique per user — deduplicated by a `client_token` (generated and stored in localStorage on first visit). No login required to view, download, or upvote.
+11. Projects without a `game` (non-mod projects): cannot be public, cannot be downloaded, cannot have star ratings, cannot have views.
+12. Private projects (regardless of game): cannot have star ratings.
 
 ---
 

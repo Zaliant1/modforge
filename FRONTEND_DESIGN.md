@@ -50,7 +50,7 @@ npm run build     # Production build
 - Material UI (MUI)
 
 ### Code Quality
-- ESLint — JS linting
+- ESLint — JS linting (unused variables are errors, not warnings)
 - Prettier — JS formatting
 
 ### Hosting
@@ -317,3 +317,4 @@ src/
 ## AI-Assisted Development
 
 - After any Claude-generated code changes, manually verify the diff for hiccups or discrepancies before committing (e.g. stale imports, naming mismatches, convention drift)
+- Before finalizing changes, run `npm run lint` and fix any errors — safely delete unused variables and imports

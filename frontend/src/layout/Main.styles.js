@@ -15,6 +15,7 @@ export const styles = {
     flexDirection: 'column',
     overflowY: 'auto',
     minHeight: 0,
+    position: 'relative',
   },
 
   // Topbar
@@ -24,9 +25,10 @@ export const styles = {
     gap: 0,
     height: 52,
     borderBottom: `1px solid ${vars.border}`,
-    bgcolor: vars.bg,
     flexShrink: 0,
     px: '24px',
+    position: 'relative',
+    zIndex: 1,
   },
   'main__breadcrumb': {
     display: 'flex',
@@ -89,6 +91,8 @@ export const styles = {
     gridTemplateColumns: 'repeat(4, 1fr)',
     borderBottom: `1px solid ${vars.border}`,
     flexShrink: 0,
+    position: 'relative',
+    zIndex: 1,
   },
   'main__metric': {
     p: '18px 24px',

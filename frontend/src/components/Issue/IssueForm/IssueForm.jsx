@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   TextField,
@@ -17,6 +17,7 @@ import {
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createIssue } from '~/api/issues'
+import { getVersions } from '~/api/versions'
 import { getPresignedUrl, uploadToR2 } from '~/api/uploads'
 import { useProject } from '~/hooks/useProject'
 import { useAuth } from '~/hooks/useAuth'
@@ -39,12 +40,26 @@ export const IssueForm = () => {
   const { user } = useAuth() || {}
   const navigate = useNavigate()
 
-  const { members = [], categories = [], version: projectVersion } = project || {}
+  const { members = [], categories = [] } = project || {}
   const { discord_id } = user || {}
+  const [versions, setVersions] = useState([])
 
   const isVisitor = !members.some(
     (member) => member.discord_id === discord_id,
   )
+
+  useEffect(() => {
+    if (!projectId) return
+    getVersions(projectId).then((result) => {
+      setVersions(result || [])
+    }).catch(() => {})
+  }, [projectId])
+
+  const currentVersion = versions.find((version) => {
+    const { status: versionStatus } = version || {}
+    return versionStatus === 'current'
+  })
+  const { id: currentVersionId } = currentVersion || {}
 
   const [form, setForm] = useState({
     summary: '',
@@ -52,11 +67,17 @@ export const IssueForm = () => {
     type: 'bug',
     priority: 'medium',
     status: 'reported',
-    version: projectVersion || '',
+    version_id: '',
     operating_systems: [],
     description: '',
   })
-  const [modlog, setModlog] = useState(null)
+
+  useEffect(() => {
+    if (currentVersionId && !form.version_id) {
+      setForm((prevForm) => ({ ...prevForm, version_id: currentVersionId }))
+    }
+  }, [currentVersionId])
+  const [, setModlog] = useState(null)
 
   const set = (key) => (event) =>
     setForm((prevForm) => ({ ...prevForm, [key]: event.target.value }))
@@ -115,6 +136,25 @@ export const IssueForm = () => {
                   {category}
                 </MenuItem>
               ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size='small' sx={useStyles(styles, 'issue-form__category')}>
+            <InputLabel>Version</InputLabel>
+            <Select
+              value={form.version_id}
+              label='Version'
+              onChange={set('version_id')}
+              disabled={isVisitor}
+            >
+              {versions.map((version) => {
+                const { id: versionId, name: versionName, status: versionStatus } = version || {}
+                return (
+                  <MenuItem key={versionId} value={versionId}>
+                    {versionName}{versionStatus === 'current' ? ' (current)' : ''}
+                  </MenuItem>
+                )
+              })}
             </Select>
           </FormControl>
 

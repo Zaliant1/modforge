@@ -176,6 +176,7 @@ export const styles = {
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
   },
 
   // -- Topbar --
@@ -186,8 +187,9 @@ export const styles = {
     px: '28px',
     height: 52,
     borderBottom: `1px solid ${vars.border}`,
-    bgcolor: vars.bg,
     flexShrink: 0,
+    position: 'relative',
+    zIndex: 1,
   },
   'ftb-crumb': {
     display: 'flex',
@@ -244,6 +246,8 @@ export const styles = {
     gridTemplateColumns: 'repeat(4, 1fr)',
     borderBottom: `1px solid ${vars.border}`,
     flexShrink: 0,
+    position: 'relative',
+    zIndex: 1,
   },
   'metric-cell': {
     p: '18px 24px',
@@ -294,6 +298,8 @@ export const styles = {
     gridTemplateColumns: '1fr 280px',
     flex: 1,
     minHeight: 0,
+    position: 'relative',
+    zIndex: 1,
   },
 
   // -- Project list --

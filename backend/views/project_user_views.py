@@ -1,25 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.project import ProjectUserAdd, ProjectUserUpdate
 
 router = APIRouter()
 
 
 @router.post('/{project_id}/users')
-def add_project_user(project_id: int, body: dict, user: dict = Depends(get_current_user)):
+def add_project_user(project_id: int, body: ProjectUserAdd, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
     role = db.get_user_role(project_id, user['discord_id'])
     if role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
-    entry = {'project_id': project_id, 'user_id': body['user_id'], 'role': body.get('role', 'contributor')}
+    entry = {'project_id': project_id, 'user_id': body.user_id, 'role': body.role.value}
     db.project_users.append(entry)
     return entry
 
 
 @router.put('/{project_id}/users/{user_id}')
-def update_project_user(project_id: int, user_id: str, body: dict, user: dict = Depends(get_current_user)):
+def update_project_user(project_id: int, user_id: str, body: ProjectUserUpdate, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:
         raise HTTPException(status_code=404, detail='Project not found')
@@ -28,7 +29,7 @@ def update_project_user(project_id: int, user_id: str, body: dict, user: dict = 
         raise HTTPException(status_code=403, detail='Forbidden')
     for pu in db.project_users:
         if pu['project_id'] == project_id and pu['user_id'] == user_id:
-            pu['role'] = body.get('role', pu['role'])
+            pu['role'] = body.role.value
             return pu
     raise HTTPException(status_code=404, detail='User not in project')
 

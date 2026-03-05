@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.assignment import AssignmentCreate, AssignmentUpdate, AssignmentOut
 
 router = APIRouter()
 
 
-@router.post('/issues/{issue_id}/assignments')
-def create_assignment(issue_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.post('/issues/{issue_id}/assignments', response_model=AssignmentOut)
+def create_assignment(issue_id: int, body: AssignmentCreate, user: dict = Depends(get_current_user)):
     issue = db.issues.get(issue_id)
     if not issue:
         raise HTTPException(status_code=404, detail='Issue not found')
@@ -17,16 +18,16 @@ def create_assignment(issue_id: int, body: dict, user: dict = Depends(get_curren
     assignment = {
         'id': assignment_id,
         'issue_id': issue_id,
-        'assignee_id': body.get('assignee_id'),
-        'task': body.get('task', ''),
+        'assignee_id': body.assignee_id,
+        'task': body.task,
         'done': False,
     }
     db.assignments[assignment_id] = assignment
     return assignment
 
 
-@router.put('/issues/{issue_id}/assignments/{assignment_id}')
-def update_assignment(issue_id: int, assignment_id: int, body: dict, user: dict = Depends(get_current_user)):
+@router.put('/issues/{issue_id}/assignments/{assignment_id}', response_model=AssignmentOut)
+def update_assignment(issue_id: int, assignment_id: int, body: AssignmentUpdate, user: dict = Depends(get_current_user)):
     assignment = db.assignments.get(assignment_id)
     if not assignment or assignment['issue_id'] != issue_id:
         raise HTTPException(status_code=404, detail='Assignment not found')
@@ -36,10 +37,12 @@ def update_assignment(issue_id: int, assignment_id: int, body: dict, user: dict 
     is_assignee = assignment['assignee_id'] == discord_id
     if not is_assignee and role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
-    if 'done' in body:
-        assignment['done'] = body['done']
-    if role in ('owner', 'maintainer') and 'task' in body:
-        assignment['task'] = body['task']
+
+    updates = body.model_dump(exclude_unset=True)
+    if 'done' in updates:
+        assignment['done'] = updates['done']
+    if role in ('owner', 'maintainer') and 'task' in updates:
+        assignment['task'] = updates['task']
     return assignment
 
 

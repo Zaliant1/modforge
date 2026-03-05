@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
 from core import database as db
+from schemas.project import ProjectStatsOut
 
 router = APIRouter()
 
 
-@router.get('/{project_id}/stats')
+@router.get('/{project_id}/stats', response_model=ProjectStatsOut)
 def get_project_stats(project_id: int, user: dict = Depends(get_current_user)):
     project = db.projects.get(project_id)
     if not project:

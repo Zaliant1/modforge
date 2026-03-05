@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faDownload, faArrowUp, faUsers, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { styles } from './ProjectPage.styles'
 import { useStyles } from '~/hooks/useStyles'
+import { useCountUp } from '~/hooks/useCountUp'
 
 const formatNum = (num) => {
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
@@ -45,8 +46,6 @@ export default function ProjectPage() {
     getProjectActivity(id).then((data) => setActivity(data || []))
   }, [id])
 
-  if (!project) return null
-
   const {
     picture,
     name = '',
@@ -68,6 +67,16 @@ export default function ProjectPage() {
     avg_rating: avgRating = 0,
     rating_count: ratingCount = 0,
   } = stats || {}
+
+  const animViews = useCountUp(views)
+  const animDownloads = useCountUp(downloads)
+  const animMembers = useCountUp(members.length)
+  const animOpenIssues = useCountUp(openIssues)
+  const animAvgRating = useCountUp(avgRating)
+  const animRatingCount = useCountUp(ratingCount)
+  const animCloseRate = useCountUp(closeRate)
+
+  if (!project) return null
 
   const canManage = isMaintainer(userRole)
   const owner = members.find((member) => member.role === ROLES.OWNER)
@@ -134,12 +143,12 @@ export default function ProjectPage() {
             <Box sx={useStyles(styles, 'hero__stats-row')}>
               <Box sx={useStyles(styles, 'hero__stat')}>
                 <FontAwesomeIcon icon={faEye} style={useStyles(styles, 'hero__stat-icon')} />
-                <Typography sx={useStyles(styles, 'hero__stat-val')}>{formatNum(views)}</Typography>
+                <Typography sx={useStyles(styles, 'hero__stat-val')}>{formatNum(animViews)}</Typography>
                 <Typography sx={useStyles(styles, 'hero__stat-label')}>Views</Typography>
               </Box>
               <Box sx={useStyles(styles, 'hero__stat')}>
                 <FontAwesomeIcon icon={faDownload} style={useStyles(styles, 'hero__stat-icon')} />
-                <Typography sx={useStyles(styles, 'hero__stat-val')}>{formatNum(downloads)}</Typography>
+                <Typography sx={useStyles(styles, 'hero__stat-val')}>{formatNum(animDownloads)}</Typography>
                 <Typography sx={useStyles(styles, 'hero__stat-label')}>Downloads</Typography>
               </Box>
               <Box sx={useStyles(styles, 'hero__stat')}>
@@ -149,7 +158,7 @@ export default function ProjectPage() {
               </Box>
               <Box sx={useStyles(styles, 'hero__stat')}>
                 <FontAwesomeIcon icon={faUsers} style={useStyles(styles, 'hero__stat-icon')} />
-                <Typography sx={useStyles(styles, 'hero__stat-val')}>{members.length}</Typography>
+                <Typography sx={useStyles(styles, 'hero__stat-val')}>{animMembers}</Typography>
                 <Typography sx={useStyles(styles, 'hero__stat-label')}>Members</Typography>
               </Box>
             </Box>
@@ -250,7 +259,7 @@ export default function ProjectPage() {
                   <Box
                     key={catName}
                     sx={useStyles(styles, 'cat')}
-                    onClick={() => navigate(`/forge/projects/${id}/${catName}`)}
+                    onClick={() => navigate(`/forge/projects/${id}/kanban/${catName}`)}
                   >
                     <Box sx={{ ...useStyles(styles, 'cat__dot'), bgcolor: catColor }} />
                     <Typography sx={useStyles(styles, 'cat__name')}>{catName}</Typography>
@@ -280,17 +289,14 @@ export default function ProjectPage() {
           <Box sx={useStyles(styles, 'qa')}>
             <Box
               sx={useStyles(styles, 'qa__btn--primary')}
-              onClick={() => {
-                const firstCategory = categories[0] || ''
-                if (firstCategory) navigate(`/forge/projects/${id}/${firstCategory}`)
-              }}
+              onClick={() => navigate(`/forge/projects/${id}/kanban`)}
             >
               <Box sx={{ ...useStyles(styles, 'qa__icon'), ...useStyles(styles, 'qa__icon--accent') }}>
                 <FontAwesomeIcon icon={faEye} />
               </Box>
               <Box sx={useStyles(styles, 'qa__label')}>
                 <Box>Open Kanban</Box>
-                <Box sx={useStyles(styles, 'qa__meta')}>{openIssues} open issues</Box>
+                <Box sx={useStyles(styles, 'qa__meta')}>{animOpenIssues} open issues</Box>
               </Box>
               <Box component='span' sx={useStyles(styles, 'qa__arrow')}>{'\u2192'}</Box>
             </Box>
@@ -338,13 +344,13 @@ export default function ProjectPage() {
             <Box sx={useStyles(styles, 'info-row')}>
               <Typography sx={useStyles(styles, 'info-key')}>Avg Rating</Typography>
               <Typography sx={{ ...useStyles(styles, 'info-val'), ...useStyles(styles, 'info-val--accent') }}>
-                {avgRating}{'\u2605'} ({ratingCount})
+                {animAvgRating}{'\u2605'} ({animRatingCount})
               </Typography>
             </Box>
             <Box sx={useStyles(styles, 'info-row')}>
               <Typography sx={useStyles(styles, 'info-key')}>Close rate</Typography>
               <Typography sx={{ ...useStyles(styles, 'info-val'), ...useStyles(styles, 'info-val--green') }}>
-                {Math.round(closeRate * 100)}%
+                {Math.round(animCloseRate * 100)}%
               </Typography>
             </Box>
           </Box>
