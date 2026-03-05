@@ -98,5 +98,6 @@
   { "discord_id": "100000000000000097", "username": "RaceCondition",   "avatar_url": "https://cdn.discordapp.com/embed/avatars/1.png", "is_donor": false },
   { "discord_id": "100000000000000098", "username": "OptionalChain",   "avatar_url": "https://cdn.discordapp.com/embed/avatars/2.png", "is_donor": false },
   { "discord_id": "100000000000000099", "username": "FinalBossGG",     "avatar_url": "https://cdn.discordapp.com/embed/avatars/3.png", "is_donor": false },
-  { "discord_id": "100000000000000100", "username": "MasterPatcher",   "avatar_url": "https://cdn.discordapp.com/embed/avatars/4.png", "is_donor": true  }
+  { "discord_id": "100000000000000100", "username": "MasterPatcher",   "avatar_url": "https://cdn.discordapp.com/embed/avatars/4.png", "is_donor": true  },
+  { "discord_id": "500343640871403520", "username": "zaliant",         "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png", "is_donor": true  }
 ]

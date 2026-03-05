@@ -8,6 +8,7 @@
   { "project_id": 1,  "user_id": "100000000000000007", "role": "contributor" },
 
   { "project_id": 2,  "user_id": "100000000000000002", "role": "owner"       },
+  { "project_id": 2,  "user_id": "500343640871403520", "role": "maintainer" },
   { "project_id": 2,  "user_id": "100000000000000001", "role": "maintainer"  },
   { "project_id": 2,  "user_id": "100000000000000010", "role": "maintainer"  },
   { "project_id": 2,  "user_id": "100000000000000011", "role": "contributor" },
@@ -19,7 +20,8 @@
   { "project_id": 3,  "user_id": "100000000000000041", "role": "contributor" },
   { "project_id": 3,  "user_id": "100000000000000050", "role": "contributor" },
 
-  { "project_id": 4,  "user_id": "100000000000000008", "role": "owner"       },
+  { "project_id": 4,  "user_id": "500343640871403520", "role": "owner"       },
+  { "project_id": 4,  "user_id": "100000000000000008", "role": "maintainer" },
   { "project_id": 4,  "user_id": "100000000000000009", "role": "maintainer"  },
   { "project_id": 4,  "user_id": "100000000000000013", "role": "maintainer"  },
   { "project_id": 4,  "user_id": "100000000000000014", "role": "contributor" },
@@ -41,6 +43,7 @@
   { "project_id": 6,  "user_id": "100000000000000028", "role": "contributor" },
 
   { "project_id": 7,  "user_id": "100000000000000030", "role": "owner"       },
+  { "project_id": 7,  "user_id": "500343640871403520", "role": "maintainer" },
   { "project_id": 7,  "user_id": "100000000000000031", "role": "maintainer"  },
   { "project_id": 7,  "user_id": "100000000000000032", "role": "contributor" },
   { "project_id": 7,  "user_id": "100000000000000033", "role": "contributor" },
@@ -57,6 +60,7 @@
   { "project_id": 9,  "user_id": "100000000000000053", "role": "contributor" },
 
   { "project_id": 10, "user_id": "100000000000000061", "role": "owner"       },
+  { "project_id": 10, "user_id": "500343640871403520", "role": "contributor" },
   { "project_id": 10, "user_id": "100000000000000062", "role": "maintainer"  },
   { "project_id": 10, "user_id": "100000000000000063", "role": "maintainer"  },
   { "project_id": 10, "user_id": "100000000000000064", "role": "contributor" },
@@ -74,6 +78,7 @@
   { "project_id": 12, "user_id": "100000000000000079", "role": "contributor" },
 
   { "project_id": 13, "user_id": "100000000000000083", "role": "owner"       },
+  { "project_id": 13, "user_id": "500343640871403520", "role": "contributor" },
   { "project_id": 13, "user_id": "100000000000000084", "role": "maintainer"  },
   { "project_id": 13, "user_id": "100000000000000085", "role": "maintainer"  },
   { "project_id": 13, "user_id": "100000000000000086", "role": "contributor" },
