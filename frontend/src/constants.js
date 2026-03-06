@@ -135,6 +135,18 @@ export const AVATAR_GRADIENTS = [
   'linear-gradient(135deg, #06b6d4, #0e7490)',
 ]
 
+export const ROLE_STYLE_MAP = {
+  owner: 'pp-member__role--owner',
+  maintainer: 'pp-member__role--maintainer',
+  contributor: 'pp-member__role--contributor',
+}
+
+export const ROLE_LABEL_MAP = {
+  owner: 'Owner',
+  maintainer: 'Maintainer',
+  contributor: 'Contributor',
+}
+
 export const ACTIVITY_DOT_COLORS = {
   issue_created: 'd-r',
   issue_closed: 'd-g',

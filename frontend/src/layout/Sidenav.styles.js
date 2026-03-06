@@ -8,6 +8,8 @@ export const styles = {
     flexDirection: 'column',
     overflow: 'hidden',
     width: 220,
+    minWidth: 220,
+    maxWidth: 220,
     flexShrink: 0,
     position: 'relative',
   },

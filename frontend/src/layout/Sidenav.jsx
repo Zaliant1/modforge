@@ -4,9 +4,10 @@ import { useProject } from '~/hooks/useProject'
 import { useAuth } from '~/hooks/useAuth'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHexagonNodes, faTableColumns, faTag, faClockRotateLeft, faLayerGroup, faCompass, faPen, faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { CATEGORY_COLORS, GAME_ICONS } from '~/constants'
+import { CATEGORY_COLORS } from '~/constants'
+import { vars } from '~/theme'
 import { styles } from './Sidenav.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle, cx } from '~/hooks/useStyles'
 
 export default function Sidenav() {
   const { project, projects = [] } = useProject() || {}
@@ -15,24 +16,23 @@ export default function Sidenav() {
   const { pathname } = useLocation()
 
   const {
-    game = '',
     categories = [],
     category_stats: categoryStats = {},
     open_issues: openIssues,
   } = project || {}
 
-  const { color: gameColor } = GAME_ICONS[game] || GAME_ICONS._default
-
   const { username = '', avatar_url: avatarUrl, role: userRole } = user || {}
 
   const isForge = pathname.startsWith('/forge')
   const isMod = pathname.startsWith('/mod')
+  const washColor = isMod ? vars.modBlue : vars.accent
 
   const projectMatch = pathname.match(/^\/forge\/projects\/([^/]+)/)
   const projectId = projectMatch ? projectMatch[1] : null
   const isProject = Boolean(projectId)
   const isOverview = pathname === `/forge/projects/${projectId}`
   const isKanban = pathname.includes(`/forge/projects/${projectId}/kanban`)
+  const isIssue = pathname.includes(`/forge/projects/${projectId}/issues/`)
 
   const totalOpenIssues = openIssues || categories.reduce((sum, category) => {
     const catName = typeof category === 'string' ? category : (category || {}).name || ''
@@ -40,17 +40,20 @@ export default function Sidenav() {
     return sum + (total - completed - wontFix)
   }, 0)
 
+  const activeColor = isMod ? vars.modBlue : vars.accent
+  const activeBg = isMod ? 'rgba(96,165,250,0.10)' : vars.accLo
+
   const NavItem = ({ label, icon, active, onClick, badge }) => {
     const { count, variant = 'sn__badge--default' } = badge || {}
     return (
       <Box
-        sx={useStyles(styles, active ? 'sn__item--active' : 'sn__item')}
+        sx={{ ...cx(styles, 'sn__item', active && 'sn__item--active'), ...(active ? { bgcolor: activeBg } : {}) }}
         onClick={onClick}
       >
-        <FontAwesomeIcon icon={icon} style={useStyles(styles, active ? 'sn__icon--active' : 'sn__icon')} />
+        <FontAwesomeIcon icon={icon} sx={{ ...cx(styles, 'sn__icon', active && 'sn__icon--active'), ...(active ? { color: activeColor } : {}) }} />
         {label}
         {badge && (
-          <Box sx={{ ...useStyles(styles, 'sn__badge'), ...useStyles(styles, variant) }}>
+          <Box sx={cx(styles, 'sn__badge', variant)}>
             {count}
           </Box>
         )}
@@ -59,16 +62,16 @@ export default function Sidenav() {
   }
 
   return (
-    <Box sx={useStyles(styles, 'sidenav')}>
+    <Box sx={getStyle(styles, 'sidenav')}>
       {/* Game color wash */}
-      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '280px', background: `linear-gradient(to bottom, ${gameColor}12 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 0 }} />
-      <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '200px', background: `linear-gradient(to top, ${gameColor}0a 0%, transparent 60%)`, pointerEvents: 'none', zIndex: 0 }} />
-      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: `linear-gradient(to right, ${gameColor}30 0%, transparent 80%)`, pointerEvents: 'none', zIndex: 2 }} />
+      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '280px', background: `linear-gradient(to bottom, ${washColor}12 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '200px', background: `linear-gradient(to top, ${washColor}0a 0%, transparent 60%)`, pointerEvents: 'none', zIndex: 0 }} />
+      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: `linear-gradient(to right, ${washColor}30 0%, transparent 80%)`, pointerEvents: 'none', zIndex: 2 }} />
       {/* Nav */}
-      <Box sx={useStyles(styles, 'sn__nav')}>
+      <Box sx={getStyle(styles, 'sn__nav')}>
         {isProject && (
           <>
-            <Typography sx={useStyles(styles, 'sn__section')}>Project</Typography>
+            <Typography sx={getStyle(styles, 'sn__section')}>Project</Typography>
             <NavItem label='Overview' icon={faHexagonNodes} active={isOverview} onClick={() => navigate(`/forge/projects/${projectId}`)} />
             <NavItem label='Kanban' icon={faTableColumns} active={isKanban} onClick={() => navigate(`/forge/projects/${projectId}/kanban`)} badge={{ count: totalOpenIssues, variant: 'sn__badge--red' }} />
             <NavItem label='Releases' icon={faTag} active={false} onClick={() => navigate(`/forge/projects/${projectId}/releases`)} />
@@ -76,11 +79,11 @@ export default function Sidenav() {
           </>
         )}
 
-        {/* Categories — only visible on kanban */}
-        {isKanban && categories.length > 0 && (
+        {/* Categories — visible on kanban and issue views */}
+        {(isKanban || isIssue) && categories.length > 0 && (
           <>
-            <Box sx={useStyles(styles, 'sn__divider')} />
-            <Typography sx={useStyles(styles, 'sn__section')}>Categories</Typography>
+            <Box sx={getStyle(styles, 'sn__divider')} />
+            <Typography sx={getStyle(styles, 'sn__section')}>Categories</Typography>
             {categories.map((category, index) => {
               const catName = typeof category === 'string' ? category : (category || {}).name || ''
               const catColor = CATEGORY_COLORS[index % CATEGORY_COLORS.length]
@@ -89,20 +92,20 @@ export default function Sidenav() {
               return (
                 <Box
                   key={catName}
-                  sx={useStyles(styles, isCatActive ? 'sn__cat-item--active' : 'sn__cat-item')}
+                  sx={cx(styles, 'sn__cat-item', isCatActive && 'sn__cat-item--active')}
                   onClick={() => navigate(`/forge/projects/${projectId}/kanban/${catName}`)}
                 >
-                  <Box sx={{ ...useStyles(styles, 'sn__cat-dot'), bgcolor: catColor }} />
+                  <Box sx={{ ...cx(styles, 'sn__cat-dot'), bgcolor: catColor }} />
                   {catName}
-                  <Box component='span' sx={useStyles(styles, 'sn__cat-count')}>{total}</Box>
+                  <Box component='span' sx={getStyle(styles, 'sn__cat-count')}>{total}</Box>
                 </Box>
               )
             })}
           </>
         )}
 
-        {isProject && <Box sx={useStyles(styles, 'sn__divider')} />}
-        <Typography sx={useStyles(styles, 'sn__section')}>Workspace</Typography>
+        {isProject && <Box sx={getStyle(styles, 'sn__divider')} />}
+        <Typography sx={getStyle(styles, 'sn__section')}>Workspace</Typography>
         {isForge && <NavItem label='All Projects' icon={faLayerGroup} active={pathname === '/forge'} onClick={() => navigate('/forge')} badge={{ count: projects.length, variant: 'sn__badge--default' }} />}
         {isMod && <NavItem label='Browse Mods' icon={faCompass} active={pathname === '/mod'} onClick={() => navigate('/mod')} />}
         <NavItem label={isForge ? 'Discover' : 'Forge'} icon={isForge ? faCompass : faLayerGroup} active={false} onClick={() => navigate(isForge ? '/mod' : '/forge')} />
@@ -110,20 +113,20 @@ export default function Sidenav() {
       </Box>
 
       {/* Footer */}
-      <Box sx={useStyles(styles, 'sn__footer')}>
-        <Box sx={useStyles(styles, 'sn__user')}>
-          <Box sx={useStyles(styles, 'sn__user-av')}>
+      <Box sx={getStyle(styles, 'sn__footer')}>
+        <Box sx={getStyle(styles, 'sn__user')}>
+          <Box sx={getStyle(styles, 'sn__user-av')}>
             {avatarUrl ? (
-              <Box component='img' src={avatarUrl} alt={username} sx={useStyles(styles, 'sn__user-av-img')} />
+              <Box component='img' src={avatarUrl} alt={username} sx={getStyle(styles, 'sn__user-av-img')} />
             ) : (
               (username || '?')[0]
             )}
           </Box>
           <Box>
-            <Typography sx={useStyles(styles, 'sn__user-name')}>{username}</Typography>
-            <Typography sx={useStyles(styles, 'sn__user-role')}>{userRole || 'Member'}</Typography>
+            <Typography sx={getStyle(styles, 'sn__user-name')}>{username}</Typography>
+            <Typography sx={getStyle(styles, 'sn__user-role')}>{userRole || 'Member'}</Typography>
           </Box>
-          <Box sx={useStyles(styles, 'sn__user-arrow')}>
+          <Box sx={getStyle(styles, 'sn__user-arrow')}>
             <FontAwesomeIcon icon={faChevronDown} />
           </Box>
         </Box>

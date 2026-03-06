@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from schemas.user import UserOut
 
@@ -52,10 +52,12 @@ class CategoryStats(BaseModel):
 
 
 class MemberOut(UserOut):
+    model_config = ConfigDict(from_attributes=True)
     role: ProjectRole
 
 
 class ProjectSummary(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     game: Optional[str] = None
@@ -64,7 +66,7 @@ class ProjectSummary(BaseModel):
     categories: list[str]
     is_public: bool
     owner_id: str
-    created_at: str
+    created_at: datetime
     version: Optional[str] = None
     is_member: bool
     user_role: Optional[str] = None
@@ -73,6 +75,7 @@ class ProjectSummary(BaseModel):
 
 
 class ProjectDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     game: Optional[str] = None
@@ -81,7 +84,7 @@ class ProjectDetail(BaseModel):
     categories: list[str]
     is_public: bool
     owner_id: str
-    created_at: str
+    created_at: datetime
     version: Optional[str] = None
     is_member: bool
     user_role: Optional[str] = None
@@ -105,13 +108,14 @@ class VersionUpdate(BaseModel):
 
 
 class VersionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     project_id: int
     name: str
     description: str
     status: VersionStatus
-    released_at: Optional[str] = None
-    created_at: str
+    released_at: Optional[datetime] = None
+    created_at: datetime
 
 
 # --- Project User ---
@@ -137,13 +141,17 @@ class RatingCreate(BaseModel):
 
 
 class ProjectStatsOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     views: int
     downloads: int
     downloads_week: int
     downloads_today: int
     open_issues: int
     open_issues_today: int
+    reported_issues: int = 0
+    in_progress_issues: int = 0
     bugs_closed: int
     close_rate: float
     avg_rating: float
     rating_count: int
+    total_categories: int = 0

@@ -4,7 +4,7 @@ import { updateProject } from '~/api/projects'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { styles } from './ProjectSettings.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 
 export default function ProjectSettings() {
   const { id } = useParams()
@@ -28,12 +28,12 @@ export default function ProjectSettings() {
   const { name: formName, about: formAbout, version: formVersion } = form || {}
 
   return (
-    <Box sx={useStyles(styles, 'project-settings')}>
+    <Box sx={getStyle(styles, 'project-settings')}>
       <Typography variant='h5' gutterBottom>
         Project Settings
       </Typography>
-      <Divider sx={useStyles(styles, 'project-settings__divider')} />
-      <Box sx={useStyles(styles, 'project-settings__form')}>
+      <Divider sx={getStyle(styles, 'project-settings__divider')} />
+      <Box sx={getStyle(styles, 'project-settings__form')}>
         <TextField
           label='Name'
           value={formName}

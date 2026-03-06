@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { Header } from '~/layout/Header'
 import { createProject } from '~/api/projects'
 import { styles } from './ProjectEdit.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 
 export default function ProjectEdit() {
   const navigate = useNavigate()
@@ -57,16 +57,16 @@ export default function ProjectEdit() {
   const { name: formName, about: formAbout, categories: formCategories = [], version: formVersion, is_public: formIsPublic } = form || {}
 
   return (
-    <Box sx={useStyles(styles, 'project-edit')}>
+    <Box sx={getStyle(styles, 'project-edit')}>
       <Header />
-      <Container maxWidth='sm' sx={useStyles(styles, 'project-edit__container')}>
+      <Container maxWidth='sm' sx={getStyle(styles, 'project-edit__container')}>
         <Typography variant='h5' gutterBottom>
           Create Project
         </Typography>
         <Box
           component='form'
           onSubmit={handleSubmit}
-          sx={useStyles(styles, 'project-edit__form')}
+          sx={getStyle(styles, 'project-edit__form')}
         >
           <TextField
             label='Name'
@@ -92,7 +92,7 @@ export default function ProjectEdit() {
             }
           />
           <Box>
-            <Box sx={useStyles(styles, 'project-edit__category-row')}>
+            <Box sx={getStyle(styles, 'project-edit__category-row')}>
               <TextField
                 label='Add Category'
                 size='small'
@@ -104,7 +104,7 @@ export default function ProjectEdit() {
                 Add
               </Button>
             </Box>
-            <Box sx={useStyles(styles, 'project-edit__chips')}>
+            <Box sx={getStyle(styles, 'project-edit__chips')}>
               {formCategories.map((category) => (
                 <Chip
                   key={category}

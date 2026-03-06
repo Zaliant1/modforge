@@ -4,3 +4,5 @@ pydantic
 httpx
 PyJWT
 python-dotenv
+sqlalchemy
+pymysql

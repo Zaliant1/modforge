@@ -14,7 +14,7 @@ import highIcon from '~/assets/svgs/high.svg'
 import mediumIcon from '~/assets/svgs/medium.svg'
 import lowIcon from '~/assets/svgs/low.svg'
 import { styles } from './KanbanCard.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 
 const PRIORITY_ICONS = {
   high: highIcon,
@@ -66,20 +66,20 @@ export const KanbanCard = ({ issue, showCategory, visible = true }) => {
 
   return (
     <Box sx={{
-      ...useStyles(styles, 'kanban-card'),
+      ...getStyle(styles, 'kanban-card'),
       ...(visible ? {} : { opacity: 0, maxHeight: 0, p: 0, m: 0, border: 'none', overflow: 'hidden' }),
       transition: 'opacity 0.2s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, border 0.2s ease',
     }} onClick={visible ? openIssue : undefined}>
       {/* Priority accent bar */}
-      <Box sx={{ ...useStyles(styles, 'kanban-card__accent'), bgcolor: accentColor }} />
+      <Box sx={{ ...getStyle(styles, 'kanban-card__accent'), bgcolor: accentColor }} />
 
       {/* Top: title + menu */}
-      <Box sx={useStyles(styles, 'kanban-card__top')}>
-        <Typography sx={useStyles(styles, 'kanban-card__title')}>{summary}</Typography>
+      <Box sx={getStyle(styles, 'kanban-card__top')}>
+        <Typography sx={getStyle(styles, 'kanban-card__title')}>{summary}</Typography>
         <Box
           component='button'
           className='card-menu-btn'
-          sx={useStyles(styles, 'kanban-card__menu')}
+          sx={getStyle(styles, 'kanban-card__menu')}
           onClick={(event) => stopAndOpen(event, () => setMenuAnchor(event.currentTarget))}
         >
           &#x22EF;
@@ -88,14 +88,14 @@ export const KanbanCard = ({ issue, showCategory, visible = true }) => {
 
       {/* Tags */}
       {issueTags.length > 0 && (
-        <Box sx={useStyles(styles, 'kanban-card__tags')}>
+        <Box sx={getStyle(styles, 'kanban-card__tags')}>
           {issueTags.map((tag) => {
             const { bg = 'rgba(255,255,255,0.05)', border = 'rgba(255,255,255,0.1)', color = '#8a8aa0' } = TAG_STYLES[tag] || {}
             return (
               <Box
                 key={tag}
                 sx={{
-                  ...useStyles(styles, 'kanban-card__tag'),
+                  ...getStyle(styles, 'kanban-card__tag'),
                   bgcolor: bg,
                   border: `1px solid ${border}`,
                   color,
@@ -109,28 +109,28 @@ export const KanbanCard = ({ issue, showCategory, visible = true }) => {
       )}
 
       {/* Footer */}
-      <Box sx={useStyles(styles, 'kanban-card__footer')}>
+      <Box sx={getStyle(styles, 'kanban-card__footer')}>
         <Box
           sx={{
-            ...useStyles(styles, 'kanban-card__priority-badge'),
+            ...getStyle(styles, 'kanban-card__priority-badge'),
             bgcolor: priBg,
             border: `1px solid ${priBorder}`,
             color: priColor,
           }}
         >
-          {priorityIcon && <Box component='img' src={priorityIcon} alt={priorityLabel} sx={useStyles(styles, 'kanban-card__priority-icon')} />}
+          {priorityIcon && <Box component='img' src={priorityIcon} alt={priorityLabel} sx={getStyle(styles, 'kanban-card__priority-icon')} />}
           {priorityLabel}
         </Box>
 
-        <Typography sx={useStyles(styles, 'kanban-card__version')}>{version}</Typography>
+        <Typography sx={getStyle(styles, 'kanban-card__version')}>{version}</Typography>
 
         {showCategory && category && (
-          <Box sx={useStyles(styles, 'kanban-card__category')}>{category}</Box>
+          <Box sx={getStyle(styles, 'kanban-card__category')}>{category}</Box>
         )}
 
         <Box
           component='button'
-          sx={useStyles(styles, 'kanban-card__upvote')}
+          sx={getStyle(styles, 'kanban-card__upvote')}
           onClick={(event) => stopAndOpen(event, () => {})}
         >
           <FontAwesomeIcon icon={faArrowUp} />
@@ -139,7 +139,7 @@ export const KanbanCard = ({ issue, showCategory, visible = true }) => {
 
         <Box
           sx={{
-            ...useStyles(styles, 'kanban-card__author'),
+            ...getStyle(styles, 'kanban-card__author'),
             background: getAvatarGradient(authorName),
           }}
         >
@@ -160,7 +160,7 @@ export const KanbanCard = ({ issue, showCategory, visible = true }) => {
           Archive
         </MenuItem>
         <MenuItem
-          sx={useStyles(styles, 'kanban-card__delete')}
+          sx={getStyle(styles, 'kanban-card__delete')}
           onClick={(event) => stopAndOpen(event, () => setMenuAnchor(null))}
         >
           Delete

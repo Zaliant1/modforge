@@ -1,7 +1,16 @@
 import { vars } from '~/theme'
 
 export const styles = {
-  'landing-body': {
+  'landing': {
+    minHeight: '100vh',
+    bgcolor: vars.bg,
+    color: vars.text,
+    fontFamily: vars.ui,
+    fontSize: 14,
+    WebkitFontSmoothing: 'antialiased',
+  },
+
+  'landing__body': {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
@@ -11,7 +20,7 @@ export const styles = {
     minHeight: 'calc(100vh - 52px)',
   },
 
-  'mode-card': {
+  'landing__card': {
     width: 420,
     borderRadius: '14px',
     border: `1px solid ${vars.border}`,
@@ -24,7 +33,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
   },
-  'mode-card--mod': {
+  'landing__card--mod': {
     '&:hover': {
       transform: 'translateY(-4px)',
       borderColor: 'rgba(59,130,246,0.3)',
@@ -41,7 +50,7 @@ export const styles = {
     },
     '&:hover::before': { opacity: 1 },
   },
-  'mode-card--forge': {
+  'landing__card--forge': {
     '&:hover': {
       transform: 'translateY(-4px)',
       borderColor: 'rgba(249,115,22,0.3)',
@@ -58,7 +67,7 @@ export const styles = {
     },
     '&:hover::before': { opacity: 1 },
   },
-  'mode-card-icon': {
+  'landing__card-icon': {
     fontSize: 32,
     mb: '20px',
     width: 56,
@@ -70,15 +79,15 @@ export const styles = {
     position: 'relative',
     zIndex: 1,
   },
-  'mode-card-icon--mod': {
+  'landing__card-icon--mod': {
     bgcolor: 'rgba(59,130,246,0.1)',
     border: '1px solid rgba(59,130,246,0.2)',
   },
-  'mode-card-icon--forge': {
+  'landing__card-icon--forge': {
     bgcolor: vars.accLo,
     border: '1px solid rgba(249,115,22,0.2)',
   },
-  'mode-card-title': {
+  'landing__card-title': {
     fontFamily: vars.ts,
     fontSize: 28,
     letterSpacing: '0.04em',
@@ -88,15 +97,15 @@ export const styles = {
     position: 'relative',
     zIndex: 1,
   },
-  'mode-card-title--mod-accent': {
+  'landing__card-title--mod-accent': {
     fontStyle: 'normal',
     color: vars.modBlue,
   },
-  'mode-card-title--forge-accent': {
+  'landing__card-title--forge-accent': {
     fontStyle: 'normal',
     color: vars.accent,
   },
-  'mode-card-sub': {
+  'landing__card-subtitle': {
     fontSize: 13,
     fontWeight: 300,
     color: vars.text2,
@@ -105,7 +114,7 @@ export const styles = {
     position: 'relative',
     zIndex: 1,
   },
-  'mode-card-features': {
+  'landing__card-features': {
     display: 'flex',
     flexDirection: 'column',
     gap: '7px',
@@ -113,7 +122,7 @@ export const styles = {
     position: 'relative',
     zIndex: 1,
   },
-  'mode-feat': {
+  'landing__feature': {
     display: 'flex',
     alignItems: 'center',
     gap: '9px',
@@ -121,15 +130,15 @@ export const styles = {
     color: vars.text2,
     fontWeight: 400,
   },
-  'feat-dot': {
+  'landing__feature-dot': {
     width: 5,
     height: 5,
     borderRadius: '50%',
     flexShrink: 0,
   },
-  'feat-dot--mod': { bgcolor: vars.modBlue },
-  'feat-dot--forge': { bgcolor: vars.accent },
-  'mode-card-cta': {
+  'landing__feature-dot--mod': { bgcolor: vars.modBlue },
+  'landing__feature-dot--forge': { bgcolor: vars.accent },
+  'landing__card-cta': {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -145,19 +154,19 @@ export const styles = {
     position: 'relative',
     zIndex: 1,
   },
-  'mode-card-cta--mod': {
+  'landing__card-cta--mod': {
     bgcolor: vars.modBg,
     color: vars.modBlue,
   },
-  'mode-card-cta--forge': {
+  'landing__card-cta--forge': {
     bgcolor: 'rgba(249,115,22,0.15)',
     color: vars.accent,
   },
-  'cta-arrow': {
+  'landing__cta-arrow': {
     fontSize: 16,
     transition: 'transform 0.15s',
   },
-  'mode-divider': {
+  'landing__divider': {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -168,7 +177,7 @@ export const styles = {
     fontWeight: 500,
     flexShrink: 0,
   },
-  'mode-divider-line': {
+  'landing__divider-line': {
     width: '1px',
     height: 60,
     bgcolor: vars.border,

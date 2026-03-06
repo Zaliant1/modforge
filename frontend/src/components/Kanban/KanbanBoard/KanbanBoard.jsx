@@ -8,7 +8,7 @@ import { useAuth } from '~/hooks/useAuth'
 import { KanbanColumn } from '~/components/Kanban/KanbanColumn/KanbanColumn'
 import { KANBAN_COLUMNS, KANBAN_FILTER_TABS, KANBAN_PRIORITY_TABS, KANBAN_SORT_TABS } from '~/constants'
 import { styles } from './KanbanBoard.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { cx } from '~/hooks/useStyles'
 
 export const KanbanBoard = ({ category }) => {
   const { id: projectId } = useParams()
@@ -122,18 +122,18 @@ export const KanbanBoard = ({ category }) => {
   }).length
 
   return (
-    <Box sx={useStyles(styles, 'kanban-board')}>
+    <Box sx={cx(styles, 'kanban-board')}>
       {/* Topbar */}
-      <Box sx={useStyles(styles, 'kanban-board__topbar')}>
-        <Box sx={useStyles(styles, 'kanban-board__breadcrumb')}>
-          <Typography component='span' sx={useStyles(styles, 'kanban-board__bc-item')}>{username}</Typography>
-          <Typography component='span' sx={useStyles(styles, 'kanban-board__bc-sep')}>/</Typography>
-          <Typography component='span' sx={useStyles(styles, 'kanban-board__bc-item')}>{projectName}</Typography>
-          <Typography component='span' sx={useStyles(styles, 'kanban-board__bc-sep')}>/</Typography>
-          <Typography component='span' sx={useStyles(styles, 'kanban-board__bc-active')}>Kanban</Typography>
+      <Box sx={cx(styles, 'kanban-board__topbar')}>
+        <Box sx={cx(styles, 'kanban-board__breadcrumb')}>
+          <Typography component='span' sx={cx(styles, 'kanban-board__bc-item')}>{username}</Typography>
+          <Typography component='span' sx={cx(styles, 'kanban-board__bc-sep')}>/</Typography>
+          <Typography component='span' sx={cx(styles, 'kanban-board__bc-item')}>{projectName}</Typography>
+          <Typography component='span' sx={cx(styles, 'kanban-board__bc-sep')}>/</Typography>
+          <Typography component='span' sx={cx(styles, 'kanban-board__bc-active')}>Kanban</Typography>
         </Box>
 
-        <Box sx={useStyles(styles, 'kanban-board__filters')}>
+        <Box sx={cx(styles, 'kanban-board__filters')}>
           {KANBAN_FILTER_TABS.map((tab) => {
             const { key, label, color: tabColor, bg: tabBg, border: tabBorder } = tab || {}
             const isActive = activeFilter === key
@@ -142,7 +142,7 @@ export const KanbanBoard = ({ category }) => {
                 key={key}
                 component='button'
                 sx={{
-                  ...useStyles(styles, isActive ? 'kanban-board__tab--active' : 'kanban-board__tab'),
+                  ...cx(styles, 'kanban-board__tab', isActive && 'kanban-board__tab--active'),
                   ...(isActive ? { color: tabColor, bgcolor: tabBg, border: `1px solid ${tabBorder}` } : {}),
                 }}
                 onClick={() => setActiveFilter(key)}
@@ -151,7 +151,7 @@ export const KanbanBoard = ({ category }) => {
               </Box>
             )
           })}
-          <Box sx={useStyles(styles, 'kanban-board__filter-sep')} />
+          <Box sx={cx(styles, 'kanban-board__filter-sep')} />
           {KANBAN_PRIORITY_TABS.map((tab) => {
             const { key, label, color: tabColor, bg: tabBg, border: tabBorder } = tab || {}
             const isActive = activePriority === key
@@ -160,7 +160,7 @@ export const KanbanBoard = ({ category }) => {
                 key={key}
                 component='button'
                 sx={{
-                  ...useStyles(styles, isActive ? 'kanban-board__tab--active' : 'kanban-board__tab'),
+                  ...cx(styles, 'kanban-board__tab', isActive && 'kanban-board__tab--active'),
                   ...(isActive ? { color: tabColor, bgcolor: tabBg, border: `1px solid ${tabBorder}` } : {}),
                 }}
                 onClick={() => setActivePriority(key)}
@@ -169,7 +169,7 @@ export const KanbanBoard = ({ category }) => {
               </Box>
             )
           })}
-          <Box sx={useStyles(styles, 'kanban-board__filter-sep')} />
+          <Box sx={cx(styles, 'kanban-board__filter-sep')} />
           {KANBAN_SORT_TABS.map((tab) => {
             const { key, label, color: tabColor, bg: tabBg, border: tabBorder } = tab || {}
             const isActive = activeSort === key
@@ -178,7 +178,7 @@ export const KanbanBoard = ({ category }) => {
                 key={key}
                 component='button'
                 sx={{
-                  ...useStyles(styles, isActive ? 'kanban-board__tab--active' : 'kanban-board__tab'),
+                  ...cx(styles, 'kanban-board__tab', isActive && 'kanban-board__tab--active'),
                   ...(isActive ? { color: tabColor, bgcolor: tabBg, border: `1px solid ${tabBorder}` } : {}),
                 }}
                 onClick={() => setActiveSort(key)}
@@ -187,23 +187,23 @@ export const KanbanBoard = ({ category }) => {
               </Box>
             )
           })}
-          <Box sx={useStyles(styles, 'kanban-board__filter-sep')} />
+          <Box sx={cx(styles, 'kanban-board__filter-sep')} />
           <Box
-            sx={useStyles(styles, 'kanban-board__archived-toggle')}
+            sx={cx(styles, 'kanban-board__archived-toggle')}
             onClick={handleArchivedToggle}
           >
-            <Box sx={useStyles(styles, showArchived ? 'kanban-board__toggle-track--on' : 'kanban-board__toggle-track')}>
-              <Box sx={useStyles(styles, showArchived ? 'kanban-board__toggle-thumb--on' : 'kanban-board__toggle-thumb')} />
+            <Box sx={cx(styles, 'kanban-board__toggle-track', showArchived && 'kanban-board__toggle-track--on')}>
+              <Box sx={cx(styles, 'kanban-board__toggle-thumb', showArchived && 'kanban-board__toggle-thumb--on')} />
             </Box>
             Archived
-            <Box component='span' sx={useStyles(styles, 'kanban-board__archived-num')}>{archivedCount}</Box>
+            <Box component='span' sx={cx(styles, 'kanban-board__archived-num')}>{archivedCount}</Box>
           </Box>
         </Box>
 
-        <Box sx={useStyles(styles, 'kanban-board__topbar-right')}>
+        <Box sx={cx(styles, 'kanban-board__topbar-right')}>
           <Box
             component='button'
-            sx={useStyles(styles, 'kanban-board__btn-accent')}
+            sx={cx(styles, 'kanban-board__btn-accent')}
             onClick={() => navigate(`/forge/projects/${projectId}/issues/new`)}
           >
             &#xFF0B; New Issue
@@ -212,14 +212,15 @@ export const KanbanBoard = ({ category }) => {
       </Box>
 
       {/* Board */}
-      <Box sx={useStyles(styles, 'kanban-board__board')}>
-        {(showArchived && !slidingOut ? KANBAN_COLUMNS.filter((col) => col.key === 'completed' || col.key === 'wont_fix') : KANBAN_COLUMNS).map((column) => {
+      <Box sx={cx(styles, 'kanban-board__board')}>
+        {(showArchived && !slidingOut ? KANBAN_COLUMNS.filter((col) => col.key === 'completed' || col.key === 'wont_fix') : KANBAN_COLUMNS).map((column, columnIndex) => {
           const { key } = column || {}
           const isSliding = (slidingOut || slidingIn) && (key === 'reported' || key === 'in_progress')
           return (
             <KanbanColumn
               key={key}
               column={column}
+              columnIndex={columnIndex}
               showCategory={!category}
               cardsFade={boardFade}
               sliding={isSliding}

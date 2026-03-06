@@ -131,7 +131,7 @@ The app has two top-level view modes — **Mod View** (consumer/browser) and **F
 
 ### Shared
 ```
-/                          → Home (landing / mode selector)
+/                          → LandingView (mode selector, redirects if mode stored)
 ```
 
 ### Mod View (browse & discover)
@@ -156,7 +156,7 @@ The app has two top-level view modes — **Mod View** (consumer/browser) and **F
 
 ## Component Overview
 
-Each component and page folder contains a `.jsx` file named after the folder and a co-located `styles.js`:
+Each component and page folder contains a `.jsx` file named after the folder and a co-located styles file:
 
 ```
 ComponentName/
@@ -208,16 +208,14 @@ src/
     Common/
       Sidebar/
       RichTextEditor/
-  pages/
-    Home/                      # shared — landing + mode routing
-      Home.jsx
-      Home.styles.js
+  pages/                       # 2 top-level dirs: Mod, Forge (landing uses LandingView component directly)
     Mod/                       # mod view pages
       ModBrowse/
       ModDetail/
     Forge/                     # forge view pages
       ForgeDashboard/
       Project/
+        ProjectHome/
         ProjectEdit/
         ProjectChangeRequest/
         ProjectSettings/
@@ -276,9 +274,9 @@ src/
   const { user, project } = someStore || {}
   const { name } = user || {}
   ```
-- Always reference colors from `theme.palette` (via `useTheme()` or the `theme` callback in `sx`) — never hardcode hex values in components or styles files. When a new color is needed, add it to `theme.js` first, then reference it from there. The theme defines: `primary`, `secondary`, `background`, `discord`, `status`, `priority`, `donate`, `border`, `surface`, `error`, `warning`, `success`, and `text`
+- All style keys follow **BEM notation**: `block__element--modifier`. The block name matches the component (e.g. `issue-card`). Elements use double underscore (`issue-card__summary`). Modifiers use double dash (`issue-card__summary--archived`)
 - When stacking `ListItemButton`s side by side, alternate between `surface.light`/`surface.lightHover` and `surface.dark`/`surface.darkHover` for visual contrast
-- Never write inline `sx` props or raw CSS files — each component/page has a co-located `ComponentName.styles.js` exporting a BEM-keyed object, consumed via the `useStyles` hook:
+- Never write inline `sx` props or `style={}` — each component/page has a co-located `ComponentName.styles.js` exporting a BEM-keyed object:
   ```js
   // IssueCard/IssueCard.styles.js
   export const styles = {
@@ -286,18 +284,23 @@ src/
     'issue-card__summary': { fontWeight: 600 },
     'issue-card__summary--archived': { opacity: 0.5 },
   }
-
-  // hooks/useStyles.js
-  export const useStyles = (styles, bemName) => {
-    const { [bemName]: style } = styles || {}
-    return style || {}
-  }
-
-  // IssueCard/IssueCard.jsx
-  import { styles } from './IssueCard.styles'
-  // ...
-  <Box sx={useStyles(styles, 'issue-card')}>
   ```
+- Use `getStyle` for single-key lookups (no state-dependent modifiers) and `cx` for composing a base key with conditional BEM modifiers:
+  ```js
+  import { getStyle, cx } from '~/hooks/useStyles'
+  import { styles } from './IssueCard.styles'
+
+  // single key — no modifiers
+  <Box sx={getStyle(styles, 'issue-card')}>
+
+  // base + conditional modifier — use cx
+  <Box sx={cx(styles, 'issue-card__summary', archived && 'issue-card__summary--archived')}>
+
+  // multiple conditional modifiers
+  <Box sx={cx(styles, 'kanban-board__tab', isActive && 'kanban-board__tab--active', isDisabled && 'kanban-board__tab--disabled')}>
+  ```
+- Never use the ternary-select pattern (`isActive ? 'key--active' : 'key'`) with `getStyle` — always use `cx` with the base key + conditional modifier instead
+- Always reference colors from `vars` (exported from `~/theme`) — never hardcode hex values in styles files. When a new color is needed, add it to `theme.js` first, then reference it from `vars`
 - Never use optional chaining (`?.`) — use `|| {}` fallbacks so properties are always safe to access directly
 - All `ALL_UPPERCASE` constants belong in `constants.js`, even if only used in one place
 - Use full descriptive names for callback parameters — never abbreviate:
@@ -318,3 +321,18 @@ src/
 
 - After any Claude-generated code changes, manually verify the diff for hiccups or discrepancies before committing (e.g. stale imports, naming mismatches, convention drift)
 - Before finalizing changes, run `npm run lint` and fix any errors — safely delete unused variables and imports
+
+---
+
+## Final Pass Checklist
+
+Run through every item below before considering any frontend work complete.
+
+- [ ] **Verbose naming** — No abbreviations (`category` not `cat`, `button` not `btn`, `response` not `res`, `comment` not `c`)
+- [ ] **No inline styles** — All styling lives in co-located `*.styles.js` files. No inline `sx` or `style={}`. Use `getStyle` for single keys, `cx` for base + conditional modifiers.
+- [ ] **BEM style keys** — All style keys follow BEM notation (`block__element--modifier`). Never ternary-select between keys — use `cx` with base + conditional modifier instead.
+- [ ] **Destructure, don't dot-access** — Always destructure objects. Destructure props/params at the function declaration. Use `|| {}` fallbacks. Array method chains (`.map`, `.filter`) are the only dot-notation exception.
+- [ ] **Export on declaration** — `export const MyComponent = ...` for components/utilities. Only pages use `export default`.
+- [ ] **Ensure cx convention** — see convention for modifiers
+- [ ] **Run lint** (`npm run lint`) — Catch and remove unused variables, unused imports, and dead code.
+- [ ] **Design doc adherence** — Cross-check component structure, naming, theme usage, and patterns against this document.

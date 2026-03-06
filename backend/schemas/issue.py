@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from schemas.user import UserBrief
 
@@ -59,11 +60,12 @@ class IssueUpdate(BaseModel):
 
 
 class IssueOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     project_id: int
     summary: str
     author_id: str
-    version_id: int
+    version_id: Optional[int] = None
     version: str
     category: str
     type: IssueType
@@ -75,7 +77,7 @@ class IssueOut(BaseModel):
     archived: bool
     upvotes: int
     is_visitor_issue: bool
-    created_at: str
+    created_at: datetime
     author: UserBrief
     progress: float
     upvoted: bool

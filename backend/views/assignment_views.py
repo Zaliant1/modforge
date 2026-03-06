@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from core.dependencies import get_current_user
-from core import database as db
+from core.database import get_user_role
+from models import Assignment, Issue
 from schemas.assignment import AssignmentCreate, AssignmentUpdate, AssignmentOut
 
 router = APIRouter()
@@ -8,52 +9,58 @@ router = APIRouter()
 
 @router.post('/issues/{issue_id}/assignments', response_model=AssignmentOut)
 def create_assignment(issue_id: int, body: AssignmentCreate, user: dict = Depends(get_current_user)):
-    issue = db.issues.get(issue_id)
+    session = user["_db"]
+    issue = session.get(Issue, issue_id)
     if not issue:
         raise HTTPException(status_code=404, detail='Issue not found')
-    role = db.get_user_role(issue['project_id'], user['discord_id'])
+    role = get_user_role(session, issue.project_id, user['discord_id'])
     if role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
-    assignment_id = db.next_id('assignment')
-    assignment = {
-        'id': assignment_id,
-        'issue_id': issue_id,
-        'assignee_id': body.assignee_id,
-        'task': body.task,
-        'done': False,
-    }
-    db.assignments[assignment_id] = assignment
+    assignment = Assignment(
+        issue_id=issue_id,
+        assignee_id=body.assignee_id,
+        task=body.task,
+        done=False,
+    )
+    session.add(assignment)
+    session.commit()
+    session.refresh(assignment)
     return assignment
 
 
 @router.put('/issues/{issue_id}/assignments/{assignment_id}', response_model=AssignmentOut)
 def update_assignment(issue_id: int, assignment_id: int, body: AssignmentUpdate, user: dict = Depends(get_current_user)):
-    assignment = db.assignments.get(assignment_id)
-    if not assignment or assignment['issue_id'] != issue_id:
+    session = user["_db"]
+    assignment = session.get(Assignment, assignment_id)
+    if not assignment or assignment.issue_id != issue_id:
         raise HTTPException(status_code=404, detail='Assignment not found')
     discord_id = user['discord_id']
-    issue = db.issues.get(issue_id)
-    role = db.get_user_role(issue['project_id'], discord_id) if issue else None
-    is_assignee = assignment['assignee_id'] == discord_id
+    issue = session.get(Issue, issue_id)
+    role = get_user_role(session, issue.project_id, discord_id) if issue else None
+    is_assignee = assignment.assignee_id == discord_id
     if not is_assignee and role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
 
     updates = body.model_dump(exclude_unset=True)
     if 'done' in updates:
-        assignment['done'] = updates['done']
+        assignment.done = updates['done']
     if role in ('owner', 'maintainer') and 'task' in updates:
-        assignment['task'] = updates['task']
+        assignment.task = updates['task']
+    session.commit()
+    session.refresh(assignment)
     return assignment
 
 
 @router.delete('/issues/{issue_id}/assignments/{assignment_id}')
 def delete_assignment(issue_id: int, assignment_id: int, user: dict = Depends(get_current_user)):
-    assignment = db.assignments.get(assignment_id)
-    if not assignment or assignment['issue_id'] != issue_id:
+    session = user["_db"]
+    assignment = session.get(Assignment, assignment_id)
+    if not assignment or assignment.issue_id != issue_id:
         raise HTTPException(status_code=404, detail='Assignment not found')
-    issue = db.issues.get(issue_id)
-    role = db.get_user_role(issue['project_id'], user['discord_id']) if issue else None
+    issue = session.get(Issue, issue_id)
+    role = get_user_role(session, issue.project_id, user['discord_id']) if issue else None
     if role not in ('owner', 'maintainer'):
         raise HTTPException(status_code=403, detail='Forbidden')
-    del db.assignments[assignment_id]
+    session.delete(assignment)
+    session.commit()
     return {'ok': True}

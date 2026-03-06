@@ -8,7 +8,33 @@ A gamer-oriented project/issue tracker (think Jira meets the modding community).
 
 ### Prerequisites
 - Python >= 3.11
-- MySQL running locally (default port 3306)
+- MySQL >= 8.0
+
+### MySQL Local Setup
+
+1. **Install MySQL 8**
+   - **Windows** — Download the [MySQL Installer](https://dev.mysql.com/downloads/installer/), run it, and choose "MySQL Server" (defaults are fine). It will prompt you to set a root password.
+   - **macOS** — `brew install mysql` then `brew services start mysql`
+   - **Linux (Debian/Ubuntu)** — `sudo apt update && sudo apt install mysql-server` then `sudo systemctl start mysql`
+
+2. **Create the database**
+   ```bash
+   mysql -u root -p
+   ```
+   ```sql
+   CREATE DATABASE modforge CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+   If you want a dedicated user instead of root:
+   ```sql
+   CREATE USER 'modforge'@'localhost' IDENTIFIED BY 'yourpassword';
+   GRANT ALL PRIVILEGES ON modforge.* TO 'modforge'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+3. **Verify the connection**
+   ```bash
+   mysql -u root -p -e "SHOW DATABASES;" | grep modforge
+   ```
 
 ### Install & Run
 
@@ -26,7 +52,7 @@ cp .env.example .env
 
 Required `.env` keys:
 ```
-DATABASE_URL=mysql+pymysql://user:password@localhost:3306/modforge
+DATABASE_URL=mysql+pymysql://root:@localhost:3306/modforge
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
 DISCORD_REDIRECT_URI=http://localhost:8000/auth/discord/callback
@@ -37,10 +63,23 @@ R2_SECRET_ACCESS_KEY=
 R2_BUCKET_NAME=
 ```
 
+> If you created a dedicated MySQL user above, use `mysql+pymysql://modforge:yourpassword@localhost:3306/modforge` instead.
+
 Run the dev server:
 ```bash
 uvicorn main:app --reload --port 8000
 ```
+
+### Seeding Dummy Data
+
+After the server has started at least once (so tables exist), seed the database with test data:
+
+```bash
+cd backend
+python seed.py
+```
+
+This creates sample users, projects, versions, issues, comments, and activity — enough to develop against without Discord OAuth. See `seed.py` for details.
 
 ### Code Quality
 - Black — Python formatting

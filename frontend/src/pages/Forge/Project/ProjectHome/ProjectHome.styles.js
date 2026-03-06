@@ -18,38 +18,52 @@ export const styles = {
     flexDirection: 'column',
     gap: '28px',
   },
+  'pp__top-row': {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '20px',
+    alignItems: 'stretch',
+  },
+  'pp__bottom-row': {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '20px',
+    alignItems: 'start',
+    flex: 1,
+  },
   'pp__right': {
     p: '20px 18px',
     display: 'flex',
     flexDirection: 'column',
     gap: '24px',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
 
   // -- Hero card --
-  'hero': {
+  'pp-hero': {
     bgcolor: vars.card,
     border: `1px solid ${vars.border}`,
     borderRadius: '12px',
     overflow: 'hidden',
   },
-  'hero__banner': {
+  'pp-hero__banner': {
     height: 140,
     position: 'relative',
     overflow: 'hidden',
-    background: 'linear-gradient(140deg, #0f1a2e 0%, #1a1000 50%, #0a0a0e 100%)',
+    background: `linear-gradient(140deg, ${vars.bannerStart} 0%, ${vars.bannerMid} 50%, ${vars.bannerEnd} 100%)`,
   },
-  'hero__banner-img': {
+  'pp-hero__banner-img': {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
   },
-  'hero__banner-glow': {
+  'pp-hero__banner-glow': {
     position: 'absolute',
     inset: 0,
-    background: `radial-gradient(ellipse at 30% 60%, rgba(249,115,22,0.18), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.12), transparent 50%)`,
+    background: `radial-gradient(ellipse at 30% 60%, ${vars.accGlow}, transparent 60%), radial-gradient(ellipse at 70% 30%, ${vars.blueGlow}, transparent 50%)`,
   },
-  'hero__banner-accent': {
+  'pp-hero__banner-accent': {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -57,18 +71,18 @@ export const styles = {
     height: '2px',
     background: `linear-gradient(90deg, ${vars.accent}, transparent)`,
   },
-  'hero__body': {
+  'pp-hero__body': {
     p: '20px 24px 24px',
   },
 
   // Title row
-  'hero__title-row': {
+  'pp-hero__title-row': {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '14px',
     mb: '10px',
   },
-  'hero__avatar': {
+  'pp-hero__avatar': {
     width: 52,
     height: 52,
     borderRadius: '10px',
@@ -81,20 +95,20 @@ export const styles = {
     mt: '-38px',
     position: 'relative',
     zIndex: 2,
-    boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+    boxShadow: `0 4px 16px ${vars.shadow}`,
     overflow: 'hidden',
     bgcolor: vars.surface,
   },
-  'hero__avatar-img': {
+  'pp-hero__avatar-img': {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
   },
-  'hero__title-info': {
+  'pp-hero__title-info': {
     flex: 1,
     pt: '4px',
   },
-  'hero__name': {
+  'pp-hero__name': {
     fontFamily: vars.ts,
     fontSize: 26,
     letterSpacing: '0.04em',
@@ -102,16 +116,16 @@ export const styles = {
     lineHeight: 1,
     mb: '6px',
   },
-  'hero__meta-row': {
+  'pp-hero__meta-row': {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     flexWrap: 'wrap',
   },
-  'hero__ver-badge': {
+  'pp-hero__version-badge': {
     fontFamily: vars.mono,
     fontSize: 10,
-    bgcolor: 'rgba(249,115,22,0.15)',
+    bgcolor: vars.accLo,
     border: `1px solid ${vars.accMed}`,
     color: vars.accent,
     py: '2px',
@@ -119,7 +133,7 @@ export const styles = {
     borderRadius: '4px',
     fontWeight: 500,
   },
-  'hero__status-pill': {
+  'pp-hero__status-pill': {
     display: 'flex',
     alignItems: 'center',
     gap: '5px',
@@ -131,18 +145,23 @@ export const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.06em',
   },
-  'hero__status-pill--live': {
-    bgcolor: 'rgba(34,197,94,0.1)',
-    border: '1px solid rgba(34,197,94,0.2)',
-    color: '#4ade80',
+  'pp-hero__status-pill--public': {
+    bgcolor: vars.greenLo,
+    border: `1px solid ${vars.greenMed}`,
+    color: vars.green,
   },
-  'hero__status-dot': {
+  'pp-hero__status-pill--private': {
+    bgcolor: vars.accLo,
+    border: `1px solid ${vars.accMed}`,
+    color: vars.accent,
+  },
+  'pp-hero__status-dot': {
     width: 5,
     height: 5,
     borderRadius: '50%',
     bgcolor: 'currentColor',
   },
-  'hero__history-btn': {
+  'pp-hero__history-button': {
     width: 26,
     height: 26,
     borderRadius: '5px',
@@ -160,17 +179,17 @@ export const styles = {
   },
 
   // Owner
-  'hero__owner-row': {
+  'pp-hero__owner-row': {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     mb: '16px',
   },
-  'hero__owner-av': {
+  'pp-hero__owner-avatar': {
     width: 22,
     height: 22,
     borderRadius: '5px',
-    background: 'linear-gradient(135deg, #5865f2, #4f46e5)',
+    background: vars.discordGradient,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -179,19 +198,19 @@ export const styles = {
     color: '#fff',
     overflow: 'hidden',
   },
-  'hero__owner-av-img': {
+  'pp-hero__owner-avatar-img': {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
   },
-  'hero__owner-name': {
+  'pp-hero__owner-name': {
     fontSize: 12,
     fontWeight: 600,
     color: vars.text2,
   },
 
   // Description
-  'hero__desc': {
+  'pp-hero__description': {
     fontSize: 13,
     fontWeight: 300,
     color: vars.text2,
@@ -200,14 +219,14 @@ export const styles = {
   },
 
   // Stats row
-  'hero__stats-row': {
+  'pp-hero__stats-row': {
     display: 'flex',
     alignItems: 'center',
     gap: 0,
     pt: '14px',
     borderTop: `1px solid ${vars.border}`,
   },
-  'hero__stat': {
+  'pp-hero__stat': {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
@@ -218,29 +237,28 @@ export const styles = {
     '&:first-of-type': { pl: 0 },
     '&:last-of-type': { borderRight: 'none' },
   },
-  'hero__stat-icon': {
+  'pp-hero__stat-icon': {
     fontSize: 13,
     color: vars.text3,
   },
-  'hero__stat-val': {
+  'pp-hero__stat-value': {
     fontFamily: vars.mono,
     fontSize: 11,
     color: vars.text,
     fontWeight: 500,
   },
-  'hero__stat-label': {
+  'pp-hero__stat-label': {
     fontSize: 11,
     color: vars.text3,
   },
 
   // -- Section header --
-  'section-head': {
+  'pp-section__head': {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
     mb: '14px',
   },
-  'section-title': {
+  'pp-section__title': {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -250,17 +268,17 @@ export const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.04em',
   },
-  'section-count': {
+  'pp-section__count': {
     fontFamily: vars.mono,
     fontSize: 9,
-    bgcolor: 'rgba(255,255,255,0.05)',
+    bgcolor: vars.pillBg,
     border: `1px solid ${vars.border}`,
     py: '1px',
     px: '6px',
     borderRadius: '3px',
     color: vars.text3,
   },
-  'section-action': {
+  'pp-section__action': {
     fontSize: 11,
     fontWeight: 600,
     color: vars.accent,
@@ -271,59 +289,43 @@ export const styles = {
     border: `1px solid ${vars.accMed}`,
     bgcolor: vars.accLo,
     transition: 'all 0.12s',
-    '&:hover': { bgcolor: 'rgba(249,115,22,0.15)' },
+    '&:hover': { bgcolor: vars.accLoHover },
   },
 
-  // -- Members grid --
-  'members-grid': {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '10px',
+  // -- Members --
+  'pp-member__wrapper': {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0,
   },
-  'mg': {
+  'pp-member': {
     bgcolor: vars.surface,
     border: `1px solid ${vars.border}`,
     borderRadius: '9px',
     p: '14px 16px',
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
   },
-  'mg__label': {
-    fontFamily: vars.mono,
-    fontSize: 9,
-    textTransform: 'uppercase',
-    letterSpacing: '0.12em',
-    color: vars.text3,
-    mb: '12px',
-    display: 'flex',
+  'pp-member__list': {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 26px 1fr auto)',
+    gap: '6px 12px',
+  },
+  'pp-member__row': {
+    display: 'grid',
+    gridTemplateColumns: 'subgrid',
+    gridColumn: 'span 3',
     alignItems: 'center',
-    gap: '6px',
-  },
-  'mg__count': {
-    fontFamily: vars.mono,
-    fontSize: 9,
-    bgcolor: 'rgba(255,255,255,0.05)',
-    border: `1px solid ${vars.border}`,
-    py: '1px',
-    px: '5px',
-    borderRadius: '3px',
-    color: vars.text3,
-  },
-  'mg__list': {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
-  'mg__row': {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
     py: '6px',
     px: '8px',
     borderRadius: '6px',
     cursor: 'pointer',
     transition: 'background 0.12s',
-    '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
+    '&:hover': { bgcolor: vars.hoverBg },
+    minWidth: 0,
   },
-  'mg__av': {
+  'pp-member__avatar': {
     width: 26,
     height: 26,
     borderRadius: '6px',
@@ -336,18 +338,21 @@ export const styles = {
     flexShrink: 0,
     overflow: 'hidden',
   },
-  'mg__av-img': {
+  'pp-member__avatar-img': {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
   },
-  'mg__name': {
+  'pp-member__name': {
     fontSize: 12,
-    fontWeight: 500,
-    color: vars.text2,
+    fontWeight: 600,
+    color: vars.text,
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
-  'mg__role': {
-    ml: 'auto',
+  'pp-member__role': {
     fontFamily: vars.mono,
     fontSize: 8,
     py: '1px',
@@ -355,30 +360,31 @@ export const styles = {
     borderRadius: '3px',
     textTransform: 'uppercase',
     letterSpacing: '0.06em',
+    textAlign: 'center',
   },
-  'mg__role--owner': {
-    bgcolor: 'rgba(249,115,22,0.1)',
-    border: '1px solid rgba(249,115,22,0.2)',
+  'pp-member__role--owner': {
+    bgcolor: vars.greenLo,
+    border: `1px solid ${vars.greenMed}`,
+    color: vars.green,
+  },
+  'pp-member__role--maintainer': {
+    bgcolor: vars.accLo,
+    border: `1px solid ${vars.accMed}`,
     color: vars.accent,
   },
-  'mg__role--maintainer': {
-    bgcolor: 'rgba(59,130,246,0.1)',
-    border: '1px solid rgba(59,130,246,0.2)',
-    color: '#60a5fa',
-  },
-  'mg__role--contributor': {
-    bgcolor: 'rgba(255,255,255,0.04)',
-    border: `1px solid ${vars.border}`,
-    color: vars.text3,
+  'pp-member__role--contributor': {
+    bgcolor: vars.blueLo,
+    border: `1px solid ${vars.blueMed}`,
+    color: vars.blue,
   },
 
   // -- Categories --
-  'cats-grid': {
+  'pp-category__grid': {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '8px',
   },
-  'cat': {
+  'pp-category': {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -393,18 +399,18 @@ export const styles = {
     overflow: 'hidden',
     '&:hover': { borderColor: vars.borderHi, bgcolor: vars.cardHi },
   },
-  'cat__dot': {
+  'pp-category__dot': {
     width: 7,
     height: 7,
     borderRadius: '50%',
     flexShrink: 0,
   },
-  'cat__name': {
+  'pp-category__name': {
     fontSize: 12,
     fontWeight: 600,
     color: vars.text,
   },
-  'cat__progress': {
+  'pp-category__progress': {
     fontFamily: vars.mono,
     fontSize: 10,
     color: vars.text3,
@@ -412,33 +418,33 @@ export const styles = {
     alignItems: 'center',
     gap: '5px',
   },
-  'cat__bar': {
+  'pp-category__bar': {
     width: 40,
     height: 3,
-    bgcolor: 'rgba(255,255,255,0.06)',
+    bgcolor: vars.progressBg,
     borderRadius: '2px',
     overflow: 'hidden',
   },
-  'cat__fill': {
+  'pp-category__fill': {
     height: '100%',
     borderRadius: '2px',
   },
-  'cat__prog-line': {
+  'pp-category__progress-line': {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     height: '2px',
-    bgcolor: 'rgba(255,255,255,0.03)',
+    bgcolor: vars.progressBg,
   },
-  'cat__prog-line-fill': {
+  'pp-category__progress-line-fill': {
     height: '100%',
     borderRadius: '0 2px 2px 0',
     opacity: 0.6,
   },
 
   // -- Right panel widgets --
-  'widget-label': {
+  'pp-widget__label': {
     fontFamily: vars.mono,
     fontSize: 9,
     textTransform: 'uppercase',
@@ -449,7 +455,7 @@ export const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  'widget-link': {
+  'pp-widget__link': {
     color: vars.text3,
     cursor: 'pointer',
     fontSize: 9,
@@ -457,84 +463,12 @@ export const styles = {
     '&:hover': { color: vars.accent },
   },
 
-  // Quick actions
-  'qa': {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
-  'qa__btn': {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    py: '10px',
-    px: '12px',
-    borderRadius: '7px',
-    bgcolor: vars.card,
-    border: `1px solid ${vars.border}`,
-    cursor: 'pointer',
-    transition: 'all 0.15s',
-    fontSize: 12,
-    fontWeight: 600,
-    color: vars.text2,
-    '&:hover': { bgcolor: vars.cardHi, borderColor: vars.borderHi, color: vars.text },
-  },
-  'qa__btn--primary': {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    py: '10px',
-    px: '12px',
-    borderRadius: '7px',
-    bgcolor: vars.accLo,
-    border: `1px solid ${vars.accMed}`,
-    cursor: 'pointer',
-    transition: 'all 0.15s',
-    fontSize: 12,
-    fontWeight: 600,
-    color: vars.accent,
-    '&:hover': { bgcolor: 'rgba(249,115,22,0.18)' },
-  },
-  'qa__icon': {
-    width: 28,
-    height: 28,
-    borderRadius: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 13,
-    flexShrink: 0,
-  },
-  'qa__icon--accent': {
-    bgcolor: 'rgba(249,115,22,0.12)',
-    border: '1px solid rgba(249,115,22,0.15)',
-  },
-  'qa__icon--default': {
-    bgcolor: 'rgba(255,255,255,0.04)',
-    border: `1px solid ${vars.border}`,
-  },
-  'qa__label': {
-    flex: 1,
-  },
-  'qa__meta': {
-    fontFamily: vars.mono,
-    fontSize: 9,
-    color: vars.text3,
-    fontWeight: 400,
-    mt: '1px',
-  },
-  'qa__arrow': {
-    color: vars.text3,
-    fontSize: 11,
-    transition: 'transform 0.15s',
-  },
-
   // Info rows
-  'info-rows': {
+  'pp-info__rows': {
     display: 'flex',
     flexDirection: 'column',
   },
-  'info-row': {
+  'pp-info__row': {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -543,60 +477,21 @@ export const styles = {
     fontSize: 12,
     '&:last-of-type': { borderBottom: 'none' },
   },
-  'info-key': {
+  'pp-info__key': {
     color: vars.text3,
     fontWeight: 400,
   },
-  'info-val': {
+  'pp-info__value': {
     color: vars.text2,
     fontWeight: 500,
     fontFamily: vars.mono,
     fontSize: 11,
   },
-  'info-val--accent': {
+  'pp-info__value--accent': {
     color: vars.accent,
   },
-  'info-val--green': {
+  'pp-info__value--green': {
     color: vars.green,
   },
 
-  // Activity
-  'act-feed': {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  'act-row': {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '9px',
-    py: '9px',
-    borderBottom: `1px solid ${vars.border}`,
-    '&:last-of-type': { borderBottom: 'none' },
-  },
-  'act-dot': {
-    width: 6,
-    height: 6,
-    borderRadius: '50%',
-    flexShrink: 0,
-    mt: '5px',
-  },
-  'd-r': { bgcolor: vars.red },
-  'd-o': { bgcolor: vars.accent },
-  'd-g': { bgcolor: vars.green },
-  'd-b': { bgcolor: vars.blue },
-  'act-body': {
-    flex: 1,
-  },
-  'act-text': {
-    fontSize: 12,
-    fontWeight: 300,
-    color: vars.text2,
-    lineHeight: 1.5,
-  },
-  'act-time': {
-    fontFamily: vars.mono,
-    fontSize: 9,
-    color: vars.text3,
-    mt: '2px',
-  },
 }

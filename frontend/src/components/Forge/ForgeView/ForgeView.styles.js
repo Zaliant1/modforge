@@ -173,10 +173,17 @@ export const styles = {
 
   // -- Forge main --
   'forge-main': {
-    overflowY: 'auto',
+    position: 'relative',
+    height: '100%',
+    overflow: 'hidden',
+  },
+  'forge-scroll': {
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'auto',
+    height: '100%',
     position: 'relative',
+    zIndex: 1,
   },
 
   // -- Topbar --

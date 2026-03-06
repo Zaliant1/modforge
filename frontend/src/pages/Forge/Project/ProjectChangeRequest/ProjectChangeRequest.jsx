@@ -11,7 +11,7 @@ import {
 import { useParams } from 'react-router-dom'
 import { getChangeRequests, resolveChangeRequest } from '~/api/projects'
 import { styles } from './ProjectChangeRequest.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 
 export default function ProjectChangeRequest() {
   const { id } = useParams()
@@ -34,11 +34,11 @@ export default function ProjectChangeRequest() {
   }
 
   return (
-    <Box sx={useStyles(styles, 'change-request')}>
+    <Box sx={getStyle(styles, 'change-request')}>
       <Typography variant='h5' gutterBottom>
         Pending Change Requests
       </Typography>
-      <Divider sx={useStyles(styles, 'change-request__divider')} />
+      <Divider sx={getStyle(styles, 'change-request__divider')} />
 
       {requests.length === 0 && (
         <Typography color='text.secondary'>No pending requests.</Typography>
@@ -50,9 +50,9 @@ export default function ProjectChangeRequest() {
           return (
             <ListItem
               key={requestId}
-              sx={useStyles(styles, 'change-request__item')}
+              sx={getStyle(styles, 'change-request__item')}
               secondaryAction={
-                <Box sx={useStyles(styles, 'change-request__actions')}>
+                <Box sx={getStyle(styles, 'change-request__actions')}>
                   <Button
                     size='small'
                     variant='contained'

@@ -1,11 +1,11 @@
 import { Routes, Route } from 'react-router-dom'
 import Main from '~/layout/Main'
-import Home from '~/pages/Home/Home'
+import { LandingView } from '~/components/Landing/LandingView/LandingView'
 import ModBrowse from '~/pages/Mod/ModBrowse/ModBrowse'
 import ModDetail from '~/pages/Mod/ModDetail/ModDetail'
 import ForgeDashboard from '~/pages/Forge/ForgeDashboard/ForgeDashboard'
 import CreateProject from '~/pages/Forge/Project/ProjectEdit/ProjectEdit'
-import ProjectPage from '~/pages/ProjectPage/ProjectPage'
+import ProjectHome from '~/pages/Forge/Project/ProjectHome/ProjectHome'
 import KanbanPage from '~/pages/Forge/Kanban/KanbanPage'
 import { IssuePage } from '~/components/Issue/IssuePage/IssuePage'
 import IssueCreate from '~/pages/Forge/Issue/IssueCreate/IssueCreate'
@@ -16,7 +16,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Shared */}
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<LandingView />} />
 
       {/* Mod View */}
       <Route path='/mod' element={<ModBrowse />} />
@@ -27,7 +27,7 @@ const AppRoutes = () => {
       <Route path='/forge/projects/new' element={<CreateProject />} />
 
       <Route path='/forge/projects/:id' element={<Main />}>
-        <Route index element={<ProjectPage />} />
+        <Route index element={<ProjectHome />} />
         <Route path='kanban' element={<KanbanPage />} />
         <Route path='kanban/:category' element={<KanbanPage />} />
         <Route path='issues/new' element={<IssueCreate />} />

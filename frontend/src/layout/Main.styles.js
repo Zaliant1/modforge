@@ -5,17 +5,24 @@ export const styles = {
     display: 'grid',
     gridTemplateRows: '52px 1fr',
     gridTemplateColumns: '220px 1fr',
-    minHeight: '100vh',
+    height: '100vh',
+    overflow: 'hidden',
   },
   'main__header': {
     gridColumn: '1 / -1',
   },
   'main__content': {
+    position: 'relative',
+    minHeight: 0,
+    overflow: 'hidden',
+  },
+  'main__scroll': {
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
-    minHeight: 0,
+    height: '100%',
     position: 'relative',
+    zIndex: 1,
   },
 
   // Topbar

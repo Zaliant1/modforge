@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/hooks/useAuth'
 import { DISCORD_AUTH_URL } from '~/constants'
 import { styles } from './Header.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle, cx } from '~/hooks/useStyles'
 
 export const Header = ({ mode }) => {
   const { user, logout, isAuthenticated } = useAuth() || {}
@@ -43,8 +43,8 @@ export const Header = ({ mode }) => {
   }
 
   return (
-    <Box sx={useStyles(styles, 'header')}>
-      <Box sx={useStyles(styles, 'header__logo')} onClick={() => navigate(mode ? `/${mode}` : '/')}>
+    <Box sx={getStyle(styles, 'header')}>
+      <Box sx={getStyle(styles, 'header__logo')} onClick={() => navigate(mode ? `/${mode}` : '/')}>
         {(() => {
           const modSize = mode === 'mod' ? 'header__logo-lg' : mode === 'forge' ? 'header__logo-sm' : 'header__logo-lg'
           const modColor = mode === 'mod' ? 'header__logo--blue' : 'header__logo--white'
@@ -52,55 +52,52 @@ export const Header = ({ mode }) => {
           const forgeColor = mode === 'forge' ? 'header__logo--orange' : 'header__logo--white'
           return (
             <>
-              <Typography component='span' sx={{ ...useStyles(styles, modSize), ...useStyles(styles, modColor) }}>M</Typography>
-              <Typography component='span' sx={{ ...useStyles(styles, modSize), ...useStyles(styles, modColor) }}>OD</Typography>
-              <Typography component='span' sx={{ ...useStyles(styles, forgeSize), ...useStyles(styles, forgeColor) }}>F</Typography>
-              <Typography component='span' sx={{ ...useStyles(styles, forgeSize), ...useStyles(styles, forgeColor) }}>ORGE</Typography>
+              <Typography component='span' sx={cx(styles, modSize, modColor)}>M</Typography>
+              <Typography component='span' sx={cx(styles, modSize, modColor)}>OD</Typography>
+              <Typography component='span' sx={cx(styles, forgeSize, forgeColor)}>F</Typography>
+              <Typography component='span' sx={cx(styles, forgeSize, forgeColor)}>ORGE</Typography>
             </>
           )
         })()}
       </Box>
 
-      <Box sx={useStyles(styles, 'header__nav')}>
-        <Box sx={useStyles(styles, 'header__nav-item')} onClick={() => navigate('/blogs')}>Blog</Box>
-        <Box sx={useStyles(styles, 'header__nav-item')} onClick={() => navigate('/credits')}>Credits</Box>
+      <Box sx={getStyle(styles, 'header__nav')}>
+        <Box sx={getStyle(styles, 'header__nav-item')} onClick={() => navigate('/blogs')}>Blog</Box>
+        <Box sx={getStyle(styles, 'header__nav-item')} onClick={() => navigate('/credits')}>Credits</Box>
       </Box>
 
       {mode && (
         <Box
-          sx={{
-            ...useStyles(styles, 'header__mode-indicator'),
-            ...useStyles(styles, mode === 'mod' ? 'header__mode-indicator--mod' : 'header__mode-indicator--forge'),
-          }}
+          sx={cx(styles, 'header__mode-indicator', mode === 'mod' ? 'header__mode-indicator--mod' : 'header__mode-indicator--forge')}
           onClick={handleToggleMode}
         >
           {mode === 'mod' ? '\u{1F3AE}' : '\u{2699}\u{FE0F}'}
           <Box component='span'>{mode === 'mod' ? 'Mod View' : 'Forge View'}</Box>
-          <Box component='span' sx={useStyles(styles, 'header__mode-switch')}>{'\u2194'} switch</Box>
+          <Box component='span' sx={getStyle(styles, 'header__mode-switch')}>{'\u2194'} switch</Box>
         </Box>
       )}
 
-      <Box sx={useStyles(styles, 'header__right')}>
+      <Box sx={getStyle(styles, 'header__right')}>
         {mode && (
-          <Box sx={useStyles(styles, 'header__search-pill')}>
-            <Box component='span' sx={useStyles(styles, 'header__search-icon')}>{'\u2315'}</Box>
+          <Box sx={getStyle(styles, 'header__search-pill')}>
+            <Box component='span' sx={getStyle(styles, 'header__search-icon')}>{'\u2315'}</Box>
             Search...
-            <Box component='span' sx={useStyles(styles, 'header__search-key')}>{'\u2318'}K</Box>
+            <Box component='span' sx={getStyle(styles, 'header__search-key')}>{'\u2318'}K</Box>
           </Box>
         )}
         <Box
           component='button'
-          sx={useStyles(styles, 'header__donate-btn')}
+          sx={getStyle(styles, 'header__donate-btn')}
           onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=YWNUFXPDDYNSL', '_blank')}
         >
           Donate
         </Box>
         {isAuthenticated ? (
-          <Box sx={useStyles(styles, 'header__avatar-wrap')}>
+          <Box sx={getStyle(styles, 'header__avatar-wrap')}>
             <Avatar
               alt={username}
               src={avatarUrl}
-              sx={useStyles(styles, 'header__avatar')}
+              sx={getStyle(styles, 'header__avatar')}
               onClick={handleAvatarClick}
             >
               {(username || '?')[0]}
@@ -111,7 +108,7 @@ export const Header = ({ mode }) => {
               id='account-menu'
               onClose={handleMenuClose}
               open={isMenuOpen}
-              slotProps={{ paper: { elevation: 0, sx: useStyles(styles, 'header__menu-paper') } }}
+              slotProps={{ paper: { elevation: 0, sx: getStyle(styles, 'header__menu-paper') } }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             >
               <MenuItem onClick={() => { handleMenuClose(); navigate('/profile') }}>
@@ -132,7 +129,7 @@ export const Header = ({ mode }) => {
           <Box
             component='a'
             href={DISCORD_AUTH_URL}
-            sx={useStyles(styles, 'header__login-btn')}
+            sx={getStyle(styles, 'header__login-btn')}
           >
             Discord Login
           </Box>

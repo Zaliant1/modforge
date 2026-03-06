@@ -1,0 +1,16 @@
+from models.tables import (
+    Base,
+    User,
+    Project,
+    ProjectVersion,
+    ProjectUser,
+    ViewEvent,
+    DownloadEvent,
+    ProjectRating,
+    Issue,
+    Assignment,
+    Comment,
+    ActivityLog,
+    ChangeRequest,
+    IssueUpvote,
+)

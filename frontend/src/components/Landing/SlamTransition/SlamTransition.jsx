@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { Box } from '@mui/material'
 import { vars } from '~/theme'
 import { styles } from './SlamTransition.styles'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 
 export const SlamTransition = ({ mode, onComplete }) => {
   const overlayRef = useRef(null)
@@ -157,11 +157,11 @@ export const SlamTransition = ({ mode, onComplete }) => {
   }, [animate])
 
   return (
-    <Box ref={overlayRef} sx={useStyles(styles, 'overlay')}>
-      <Box ref={flashRef} sx={useStyles(styles, 'flash')} />
-      <Box ref={ringRef} sx={useStyles(styles, 'ring')} />
-      <Box ref={modLetterRef} sx={useStyles(styles, 'letter-m')}>M</Box>
-      <Box ref={forgeLetterRef} sx={useStyles(styles, 'letter-f')}>F</Box>
+    <Box ref={overlayRef} sx={getStyle(styles, 'overlay')}>
+      <Box ref={flashRef} sx={getStyle(styles, 'flash')} />
+      <Box ref={ringRef} sx={getStyle(styles, 'ring')} />
+      <Box ref={modLetterRef} sx={getStyle(styles, 'letter-m')}>M</Box>
+      <Box ref={forgeLetterRef} sx={getStyle(styles, 'letter-f')}>F</Box>
     </Box>
   )
 }

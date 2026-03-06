@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWindows, faApple, faLinux } from '@fortawesome/free-brands-svg-icons'
 import { faGamepad } from '@fortawesome/free-solid-svg-icons'
 import { Box, Typography } from '@mui/material'
-import { useStyles } from '~/hooks/useStyles'
+import { getStyle } from '~/hooks/useStyles'
 import { styles } from './OsIcon.styles'
 
 const OS_ICONS = {
@@ -14,7 +14,7 @@ const OS_ICONS = {
 
 export const OsIcon = ({ os, showNa = false }) => {
   return (
-    <Box sx={useStyles(styles, 'os-icon')}>
+    <Box sx={getStyle(styles, 'os-icon')}>
       {(!os || os.length === 0) && showNa && (
         <Typography variant='body'>N/A</Typography>
       )}

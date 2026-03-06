@@ -151,6 +151,26 @@ export const vars = {
   heading: '"Outfit", sans-serif',
   ui: '"Outfit", sans-serif',
   mono: '"JetBrains Mono", monospace',
+  // Banner
+  bannerStart: '#0f1a2e',
+  bannerMid: '#1a1000',
+  bannerEnd: '#0a0a0e',
+  // Glow
+  blueGlow: 'rgba(59,130,246,0.12)',
+  // Shadows
+  shadow: 'rgba(0,0,0,0.5)',
+  // Discord
+  discordGradient: 'linear-gradient(135deg, #5865f2, #4f46e5)',
+  // Semantic low/med
+  greenLo: 'rgba(34,197,94,0.1)',
+  greenMed: 'rgba(34,197,94,0.2)',
+  blueLo: 'rgba(59,130,246,0.1)',
+  blueMed: 'rgba(59,130,246,0.2)',
+  // Utility
+  hoverBg: 'rgba(255,255,255,0.03)',
+  pillBg: 'rgba(255,255,255,0.05)',
+  accLoHover: 'rgba(249,115,22,0.15)',
+  progressBg: 'rgba(255,255,255,0.06)',
 }
 
 export default theme

@@ -1,7 +1,8 @@
+from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ChangeRequestStatus(str, Enum):
@@ -20,12 +21,13 @@ class ChangeRequestResolve(BaseModel):
 
 
 class ChangeRequestOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     project_id: int
     requester_id: str
     status: ChangeRequestStatus
     changes: dict[str, Any]
     note: str
-    created_at: str
-    reviewed_at: Optional[str] = None
+    created_at: datetime
+    reviewed_at: Optional[datetime] = None
     reviewer_id: Optional[str] = None
